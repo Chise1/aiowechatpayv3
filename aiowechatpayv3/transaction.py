@@ -3,24 +3,26 @@
 from .type import RequestType, WeChatPayType
 
 
-async def pay(self,
-        description,
-        out_trade_no,
-        amount,
-        payer=None,
-        time_expire=None,
-        attach=None,
-        goods_tag=None,
-        detail=None,
-        scene_info=None,
-        settle_info=None,
-        notify_url=None,
-        appid=None,
-        mchid=None,
-        sub_appid=None,
-        sub_mchid=None,
-        support_fapiao=False,
-        pay_type=None):
+async def pay(
+    self,
+    description,
+    out_trade_no,
+    amount,
+    payer=None,
+    time_expire=None,
+    attach=None,
+    goods_tag=None,
+    detail=None,
+    scene_info=None,
+    settle_info=None,
+    notify_url=None,
+    appid=None,
+    mchid=None,
+    sub_appid=None,
+    sub_mchid=None,
+    support_fapiao=False,
+    pay_type=None,
+):
     """统一下单
     :return code, message:
     :param description: 商品描述，示例值:'Image形象店-深圳腾大-QQ公仔'
@@ -43,77 +45,77 @@ async def pay(self,
     """
     params = {}
     if not (notify_url or self._notify_url):
-        raise Exception('notify_url is not assigned.')
-    params.update({'notify_url': notify_url or self._notify_url})
+        raise Exception("notify_url is not assigned.")
+    params.update({"notify_url": notify_url or self._notify_url})
     if description:
-        params.update({'description': description})
+        params.update({"description": description})
     else:
-        raise Exception('description is not assigned.')
+        raise Exception("description is not assigned.")
     if out_trade_no:
-        params.update({'out_trade_no': out_trade_no})
+        params.update({"out_trade_no": out_trade_no})
     else:
-        raise Exception('out_trade_no is not assigned.')
+        raise Exception("out_trade_no is not assigned.")
     if amount:
-        params.update({'amount': amount})
+        params.update({"amount": amount})
     else:
-        raise Exception('amount is not assigned.')
+        raise Exception("amount is not assigned.")
     if payer:
-        params.update({'payer': payer})
+        params.update({"payer": payer})
     if scene_info:
-        params.update({'scene_info': scene_info})
+        params.update({"scene_info": scene_info})
     if time_expire:
-        params.update({'time_expire': time_expire})
+        params.update({"time_expire": time_expire})
     if attach:
-        params.update({'attach': attach})
+        params.update({"attach": attach})
     if goods_tag:
-        params.update({'goods_tag': goods_tag})
+        params.update({"goods_tag": goods_tag})
     if detail:
-        params.update({'detail': detail})
+        params.update({"detail": detail})
     if settle_info:
-        params.update({'settle_info': settle_info})
+        params.update({"settle_info": settle_info})
     pay_type = pay_type or self._type
     if self._partner_mode:
-        params.update({'sp_appid': appid or self._appid})
-        params.update({'sp_mchid': mchid or self._mchid})
+        params.update({"sp_appid": appid or self._appid})
+        params.update({"sp_mchid": mchid or self._mchid})
         if sub_mchid:
-            params.update({'sub_mchid': sub_mchid})
+            params.update({"sub_mchid": sub_mchid})
         else:
-            raise Exception('sub_mchid is not assigned.')
+            raise Exception("sub_mchid is not assigned.")
         if sub_appid:
-            params.update({'sub_appid': sub_appid})
+            params.update({"sub_appid": sub_appid})
         if pay_type in [WeChatPayType.JSAPI, WeChatPayType.MINIPROG]:
             if not payer:
-                raise Exception('payer is not assigned')
-            path = '/v3/pay/partner/transactions/jsapi'
+                raise Exception("payer is not assigned")
+            path = "/v3/pay/partner/transactions/jsapi"
         elif pay_type == WeChatPayType.APP:
-            path = '/v3/pay/partner/transactions/app'
+            path = "/v3/pay/partner/transactions/app"
         elif pay_type == WeChatPayType.H5:
             if not scene_info:
-                raise Exception('scene_info is not assigned.')
-            path = '/v3/pay/partner/transactions/h5'
+                raise Exception("scene_info is not assigned.")
+            path = "/v3/pay/partner/transactions/h5"
         elif pay_type == WeChatPayType.NATIVE:
-            path = '/v3/pay/partner/transactions/native'
+            path = "/v3/pay/partner/transactions/native"
         else:
-            raise Exception('pay_type is not assigned.')
+            raise Exception("pay_type is not assigned.")
     else:
-        params.update({'appid': appid or self._appid})
-        params.update({'mchid': mchid or self._mchid})
+        params.update({"appid": appid or self._appid})
+        params.update({"mchid": mchid or self._mchid})
         if pay_type in [WeChatPayType.JSAPI, WeChatPayType.MINIPROG]:
             if not payer:
-                raise Exception('payer is not assigned')
-            path = '/v3/pay/transactions/jsapi'
+                raise Exception("payer is not assigned")
+            path = "/v3/pay/transactions/jsapi"
         elif pay_type == WeChatPayType.APP:
-            path = '/v3/pay/transactions/app'
+            path = "/v3/pay/transactions/app"
         elif pay_type == WeChatPayType.H5:
             if not scene_info:
-                raise Exception('scene_info is not assigned.')
-            path = '/v3/pay/transactions/h5'
+                raise Exception("scene_info is not assigned.")
+            path = "/v3/pay/transactions/h5"
         elif pay_type == WeChatPayType.NATIVE:
-            path = '/v3/pay/transactions/native'
+            path = "/v3/pay/transactions/native"
         else:
-            raise Exception('pay_type is not assigned.')
+            raise Exception("pay_type is not assigned.")
     if support_fapiao:
-        params.update({'support_fapiao': support_fapiao})
+        params.update({"support_fapiao": support_fapiao})
     return await self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -125,19 +127,19 @@ def close(self, out_trade_no, mchid=None, sub_mchid=None):
     """
     if self._partner_mode:
         if out_trade_no:
-            path = '/v3/pay/partner/transactions/out-trade-no/%s/close' % out_trade_no
+            path = "/v3/pay/partner/transactions/out-trade-no/%s/close" % out_trade_no
         else:
-            raise Exception('out_trade_no is not assigned.')
+            raise Exception("out_trade_no is not assigned.")
         if sub_mchid:
-            params = {'sp_mchid': mchid or self._mchid, 'sub_mchid': sub_mchid}
+            params = {"sp_mchid": mchid or self._mchid, "sub_mchid": sub_mchid}
         else:
-            raise Exception('sub_mchid is not assigned.')
+            raise Exception("sub_mchid is not assigned.")
     else:
         if out_trade_no:
-            path = '/v3/pay/transactions/out-trade-no/%s/close' % out_trade_no
+            path = "/v3/pay/transactions/out-trade-no/%s/close" % out_trade_no
         else:
-            raise Exception('out_trade_no is not assigned.')
-        params = {'mchid': mchid or self._mchid}
+            raise Exception("out_trade_no is not assigned.")
+        params = {"mchid": mchid or self._mchid}
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -150,33 +152,35 @@ def query(self, transaction_id=None, out_trade_no=None, mchid=None, sub_mchid=No
     """
     if self._partner_mode:
         if transaction_id:
-            path = '/v3/pay/partner/transactions/id/%s' % transaction_id
+            path = "/v3/pay/partner/transactions/id/%s" % transaction_id
         elif out_trade_no:
-            path = '/v3/pay/partner/transactions/out-trade-no/%s' % out_trade_no
+            path = "/v3/pay/partner/transactions/out-trade-no/%s" % out_trade_no
         else:
-            raise Exception('transaction_id or out_trade_no is not assigned.')
-        path = '%s?sp_mchid=%s&sub_mchid=%s' % (path, mchid or self._mchid, sub_mchid)
+            raise Exception("transaction_id or out_trade_no is not assigned.")
+        path = "%s?sp_mchid=%s&sub_mchid=%s" % (path, mchid or self._mchid, sub_mchid)
     else:
         if transaction_id:
-            path = '/v3/pay/transactions/id/%s' % transaction_id
+            path = "/v3/pay/transactions/id/%s" % transaction_id
         elif out_trade_no:
-            path = '/v3/pay/transactions/out-trade-no/%s' % out_trade_no
+            path = "/v3/pay/transactions/out-trade-no/%s" % out_trade_no
         else:
-            raise Exception('transaction_id out_trade_no is not assigned.')
-        path = '%s?mchid=%s' % (path, mchid or self._mchid)
+            raise Exception("transaction_id out_trade_no is not assigned.")
+        path = "%s?mchid=%s" % (path, mchid or self._mchid)
     return self._core.request(path)
 
 
-def refund(self,
-           out_refund_no,
-           amount,
-           transaction_id=None,
-           out_trade_no=None,
-           reason=None,
-           funds_account=None,
-           goods_detail=None,
-           notify_url=None,
-           sub_mchid=None):
+def refund(
+    self,
+    out_refund_no,
+    amount,
+    transaction_id=None,
+    out_trade_no=None,
+    reason=None,
+    funds_account=None,
+    goods_detail=None,
+    notify_url=None,
+    sub_mchid=None,
+):
     """申请退款
     :param out_refund_no: 商户退款单号，示例值:'1217752501201407033233368018'
     :param amount: 金额信息，示例值:{'refund':888, 'total':888, 'currency':'CNY', 'refund_fee':100}
@@ -190,33 +194,33 @@ def refund(self,
     """
     params = {}
     if notify_url or self._notify_url:
-        params.update({'notify_url': notify_url or self._notify_url})
+        params.update({"notify_url": notify_url or self._notify_url})
     if out_refund_no:
-        params.update({'out_refund_no': out_refund_no})
+        params.update({"out_refund_no": out_refund_no})
     else:
-        raise Exception('out_refund_no is not assigned.')
+        raise Exception("out_refund_no is not assigned.")
     if amount:
-        params.update({'amount': amount})
+        params.update({"amount": amount})
     else:
-        raise Exception('amount is not assigned.')
+        raise Exception("amount is not assigned.")
     if transaction_id:
-        params.update({'transaction_id': transaction_id})
+        params.update({"transaction_id": transaction_id})
     elif out_trade_no:
-        params.update({'out_trade_no': out_trade_no})
+        params.update({"out_trade_no": out_trade_no})
     else:
-        raise Exception('transaction_id is not assigned.')
+        raise Exception("transaction_id is not assigned.")
     if reason:
-        params.update({'reason': reason})
+        params.update({"reason": reason})
     if funds_account:
-        params.update({'funds_account': funds_account})
+        params.update({"funds_account": funds_account})
     if goods_detail:
-        params.update({'goods_detail': goods_detail})
+        params.update({"goods_detail": goods_detail})
     if self._partner_mode:
         if sub_mchid:
-            params.update({'sub_mchid': sub_mchid})
+            params.update({"sub_mchid": sub_mchid})
         else:
-            raise Exception('sub_mchid is not assigned.')
-    path = '/v3/refund/domestic/refunds'
+            raise Exception("sub_mchid is not assigned.")
+    path = "/v3/refund/domestic/refunds"
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -225,41 +229,51 @@ def query_refund(self, out_refund_no, sub_mchid=None):
     :param out_refund_no: 商户退款单号，示例值:'1217752501201407033233368018'
     :param sub_mchid: (服务商模式)子商户的商户号，由微信支付生成并下发。示例值:'1900000109'
     """
-    path = '/v3/refund/domestic/refunds/%s' % out_refund_no
+    path = "/v3/refund/domestic/refunds/%s" % out_refund_no
     if self._partner_mode:
         if sub_mchid:
-            path = '%s?sub_mchid=%s' % (path, sub_mchid)
+            path = "%s?sub_mchid=%s" % (path, sub_mchid)
         else:
-            raise Exception('sub_mchid is not assigned.')
+            raise Exception("sub_mchid is not assigned.")
     return self._core.request(path)
 
 
-def trade_bill(self, bill_date, bill_type='ALL', tar_type='GZIP', sub_mchid=None):
+def trade_bill(self, bill_date, bill_type="ALL", tar_type="GZIP", sub_mchid=None):
     """申请交易账单
     :param bill_date: 账单日期，示例值:'2019-06-11'
     :param bill_type: 账单类型, 默认值:'ALL'
     :param tar_type: 压缩类型，默认值:'GZIP'
     :param sub_mchid: (服务商模式)子商户的商户号，由微信支付生成并下发。示例值:'1900000109'
     """
-    path = '/v3/bill/tradebill?bill_date=%s&bill_type=%s&tar_type=%s' % (bill_date, bill_type, tar_type)
+    path = "/v3/bill/tradebill?bill_date=%s&bill_type=%s&tar_type=%s" % (
+        bill_date,
+        bill_type,
+        tar_type,
+    )
     if self._partner_mode and sub_mchid:
-        path = '%s&sub_mchid=%s' % (path, sub_mchid)
+        path = "%s&sub_mchid=%s" % (path, sub_mchid)
     return self._core.request(path)
 
 
-def fundflow_bill(self, bill_date, account_type='BASIC', tar_type='GZIP'):
+def fundflow_bill(self, bill_date, account_type="BASIC", tar_type="GZIP"):
     """申请资金账单
     :param bill_date: 账单日期，示例值:'2019-06-11'
     :param account_type: 资金账户类型, 默认值:'BASIC'，基本账户, 可选:'OPERATION'，运营账户；'FEES'，手续费账户
     :param tar_type: 压缩类型，默认值:'GZIP'
     """
     if not bill_date:
-        raise Exception('bill_date is not assigned.')
-    path = '/v3/bill/fundflowbill?bill_date=%s&account_type=%s&tar_type=%s' % (bill_date, account_type, tar_type)
+        raise Exception("bill_date is not assigned.")
+    path = "/v3/bill/fundflowbill?bill_date=%s&account_type=%s&tar_type=%s" % (
+        bill_date,
+        account_type,
+        tar_type,
+    )
     return self._core.request(path)
 
 
-def submch_fundflow_bill(self, sub_mchid, bill_date, account_type, algorithm='AEAD_AES_256_GCM', tar_type=None):
+def submch_fundflow_bill(
+    self, sub_mchid, bill_date, account_type, algorithm="AEAD_AES_256_GCM", tar_type=None
+):
     """申请单个子商户资金账单
     :param sub_mchid: 子商户号，示例值:'19000000001'
     :param bill_date: 账单日期，格式YYYY-MM-DD，示例值:'2019-06-11'
@@ -267,25 +281,25 @@ def submch_fundflow_bill(self, sub_mchid, bill_date, account_type, algorithm='AE
     :param algorithm: 加密算法，枚举值:'AEAD_AES_256_GCM':AEAD_AES_256_GCM加密算法
     :param tar_type: 压缩格式，枚举值:'GZIP':返回格式为.gzip的压缩包账单
     """
-    path = '/v3/bill/sub-merchant-fundflowbill'
+    path = "/v3/bill/sub-merchant-fundflowbill"
     if sub_mchid:
-        path += '?sub_mchid=%s' % sub_mchid
+        path += "?sub_mchid=%s" % sub_mchid
     else:
-        raise Exception('sub_mchid is not assigned.')
+        raise Exception("sub_mchid is not assigned.")
     if bill_date:
-        path += '&bill_date=%s' % bill_date
+        path += "&bill_date=%s" % bill_date
     else:
-        raise Exception('bill_date is not assigned.')
+        raise Exception("bill_date is not assigned.")
     if account_type:
-        path += '&account_type=%s' % account_type
+        path += "&account_type=%s" % account_type
     else:
-        raise Exception('account_type is not assigned.')
+        raise Exception("account_type is not assigned.")
     if algorithm:
-        path += '&algorithm=%s' % algorithm
+        path += "&algorithm=%s" % algorithm
     else:
-        raise Exception('algorithm is not assigned.')
+        raise Exception("algorithm is not assigned.")
     if tar_type:
-        path += '&tar_type=%s' % tar_type
+        path += "&tar_type=%s" % tar_type
     return self._core.request(path)
 
 
@@ -293,21 +307,23 @@ def download_bill(self, url):
     """下载账单
     :param url: 账单下载地址，示例值:'https://api.mch.weixin.qq.com/v3/billdownload/file?token=xxx'
     """
-    path = url[len(self._core._gate_way):] if url.startswith(self._core._gate_way) else url
+    path = url[len(self._core._gate_way) :] if url.startswith(self._core._gate_way) else url
     return self._core.request(path, skip_verify=True)
 
 
-def combine_pay(self,
-                combine_out_trade_no,
-                sub_orders,
-                scene_info=None,
-                combine_payer_info=None,
-                time_start=None,
-                time_expire=None,
-                combine_appid=None,
-                combine_mchid=None,
-                notify_url=None,
-                pay_type=None):
+def combine_pay(
+    self,
+    combine_out_trade_no,
+    sub_orders,
+    scene_info=None,
+    combine_payer_info=None,
+    time_start=None,
+    time_expire=None,
+    combine_appid=None,
+    combine_mchid=None,
+    notify_url=None,
+    pay_type=None,
+):
     """合单支付下单
     :param combine_out_trade_no: 合单商户订单号, 示例值:'P20150806125346'
     :param sub_orders: 子单信息，示例值:[{'mchid':'1900000109', 'attach':'深圳分店', 'amount':{'total_amount':100,'currency':'CNY'}, 'out_trade_no':'20150806125346', 'description':'腾讯充值中心-QQ会员充值', 'settle_info':{'profit_sharing':False, 'subsidy_amount':10}}]
@@ -321,42 +337,42 @@ def combine_pay(self,
     :param pay_type: 微信支付类型，示例值:WeChatPayType.JSAPI
     """
     params = {}
-    params.update({'combine_appid': combine_appid or self._appid})
-    params.update({'combine_mchid': combine_mchid or self._mchid})
+    params.update({"combine_appid": combine_appid or self._appid})
+    params.update({"combine_mchid": combine_mchid or self._mchid})
     if not (notify_url or self._notify_url):
-        raise Exception('notify_url is not assigned.')
-    params.update({'notify_url': notify_url or self._notify_url})
+        raise Exception("notify_url is not assigned.")
+    params.update({"notify_url": notify_url or self._notify_url})
     if combine_out_trade_no:
-        params.update({'combine_out_trade_no': combine_out_trade_no})
+        params.update({"combine_out_trade_no": combine_out_trade_no})
     else:
-        raise Exception('combine_out_trade_no is not assigned.')
+        raise Exception("combine_out_trade_no is not assigned.")
     if sub_orders:
-        params.update({'sub_orders': sub_orders})
+        params.update({"sub_orders": sub_orders})
     else:
-        raise Exception('sub_orders is not assigned.')
+        raise Exception("sub_orders is not assigned.")
     if scene_info:
-        params.update({'scene_info': scene_info})
+        params.update({"scene_info": scene_info})
     if combine_payer_info:
-        params.update({'combine_payer_info': combine_payer_info})
+        params.update({"combine_payer_info": combine_payer_info})
     if time_start:
-        params.update({'time_start': time_start})
+        params.update({"time_start": time_start})
     if time_expire:
-        params.update({'time_expire': time_expire})
+        params.update({"time_expire": time_expire})
     pay_type = pay_type or self._type
     if pay_type in [WeChatPayType.JSAPI, WeChatPayType.MINIPROG]:
         if not combine_payer_info:
-            raise Exception('combine_payer_info is not assigned')
-        path = '/v3/combine-transactions/jsapi'
+            raise Exception("combine_payer_info is not assigned")
+        path = "/v3/combine-transactions/jsapi"
     elif pay_type == WeChatPayType.APP:
-        path = '/v3/combine-transactions/app'
+        path = "/v3/combine-transactions/app"
     elif pay_type == WeChatPayType.H5:
         if not scene_info:
-            raise Exception('scene_info is not assigned.')
-        path = '/v3/combine-transactions/h5'
+            raise Exception("scene_info is not assigned.")
+        path = "/v3/combine-transactions/h5"
     elif pay_type == WeChatPayType.NATIVE:
-        path = '/v3/combine-transactions/native'
+        path = "/v3/combine-transactions/native"
     else:
-        raise Exception('pay_type is not assigned.')
+        raise Exception("pay_type is not assigned.")
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -366,10 +382,10 @@ def combine_query(self, combine_out_trade_no):
     """
     params = {}
     if not combine_out_trade_no:
-        raise Exception('combine_out_trade_no is not assigned')
+        raise Exception("combine_out_trade_no is not assigned")
     else:
-        params.update({'combine_out_trade_no': combine_out_trade_no})
-    path = '/v3/combine-transactions/out-trade-no/%s' % combine_out_trade_no
+        params.update({"combine_out_trade_no": combine_out_trade_no})
+    path = "/v3/combine-transactions/out-trade-no/%s" % combine_out_trade_no
     return self._core.request(path)
 
 
@@ -380,12 +396,12 @@ def combine_close(self, combine_out_trade_no, sub_orders, combine_appid=None):
     :param combine_appid: 合单商户appid, 示例值:'wxd678efh567hg6787'
     """
     params = {}
-    params.update({'combine_appid': combine_appid or self._appid})
+    params.update({"combine_appid": combine_appid or self._appid})
     if not combine_out_trade_no:
-        raise Exception('combine_out_trade_no is not assigned.')
+        raise Exception("combine_out_trade_no is not assigned.")
     if not sub_orders:
-        raise Exception('sub_orders is not assigned.')
+        raise Exception("sub_orders is not assigned.")
     else:
-        params.update({'sub_orders': sub_orders})
-    path = '/v3/combine-transactions/out-trade-no/%s/close' % combine_out_trade_no
+        params.update({"sub_orders": sub_orders})
+    path = "/v3/combine-transactions/out-trade-no/%s/close" % combine_out_trade_no
     return self._core.request(path, method=RequestType.POST, data=params)

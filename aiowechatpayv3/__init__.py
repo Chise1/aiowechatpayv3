@@ -3,19 +3,21 @@
 from .type import SignType, WeChatPayType
 
 
-class WeChatPay():
-    def __init__(self,
-                 wechatpay_type,
-                 mchid,
-                 private_key,
-                 cert_serial_no,
-                 appid,
-                 apiv3_key,
-                 notify_url=None,
-                 cert_dir=None,
-                 logger=None,
-                 partner_mode=False,
-                 proxy=None):
+class WeChatPay:
+    def __init__(
+        self,
+        wechatpay_type,
+        mchid,
+        private_key,
+        cert_serial_no,
+        appid,
+        apiv3_key,
+        notify_url=None,
+        cert_dir=None,
+        logger=None,
+        partner_mode=False,
+        proxy=None,
+    ):
         """
         :param wechatpay_type: 微信支付类型，示例值:WeChatPayType.MINIPROG
         :param mchid: 直连商户号，示例值:'1230000109'
@@ -35,13 +37,15 @@ class WeChatPay():
         self._mchid = mchid
         self._appid = appid
         self._notify_url = notify_url
-        self._core = Core(mchid=self._mchid,
-                          cert_serial_no=cert_serial_no,
-                          private_key=private_key,
-                          apiv3_key=apiv3_key,
-                          cert_dir=cert_dir,
-                          logger=logger,
-                          proxy=proxy)
+        self._core = Core(
+            mchid=self._mchid,
+            cert_serial_no=cert_serial_no,
+            private_key=private_key,
+            apiv3_key=apiv3_key,
+            cert_dir=cert_dir,
+            logger=logger,
+            proxy=proxy,
+        )
         self._partner_mode = partner_mode
 
     def sign(self, data, sign_type=SignType.RSA_SHA256):
@@ -72,115 +76,179 @@ class WeChatPay():
         """
         return self._core.decrypt(ciphtext)
 
-    from .apply4subject import (apply4subject_cancel, apply4subject_query,
-                                apply4subject_state, apply4subject_submit)
-    from .applyment import (applyment_query, applyment_settlement_modify,
-                            applyment_settlement_query, applyment_submit)
-    from .businesscircle import (business_parking_sync, business_point_status,
-                                 points_notify, user_authorization)
-    from .capital import (capital_branches, capital_cities,
-                          capital_corporate_banks, capital_personal_banks,
-                          capital_provinces, capital_search_bank_number)
-    from .complaint import (complaint_complete, complaint_detail_query,
-                            complaint_history_query, complaint_image_download,
-                            complaint_image_upload, complaint_list_query,
-                            complaint_notification_create,
-                            complaint_notification_delete,
-                            complaint_notification_query,
-                            complaint_notification_update, complaint_response,
-                            complaint_update_refund)
-    from .fapiao import (fapiao_applications, fapiao_card_template,
-                         fapiao_insert_cards, fapiao_merchant_base_info,
-                         fapiao_merchant_config, fapiao_query, fapiao_reverse,
-                         fapiao_set_merchant_config, fapiao_tax_codes,
-                         fapiao_title, fapiao_title_url, fapiao_upload_file)
-    from .goldplan import (goldplan_advertising_close,
-                           goldplan_advertising_filter,
-                           goldplan_advertising_open,
-                           goldplan_custompage_change, goldplan_plan_change)
-    from .marketing import (marketing_busifavor_callback_query,
-                            marketing_busifavor_callback_update,
-                            marketing_busifavor_coupon_associate,
-                            marketing_busifavor_coupon_deactivate,
-                            marketing_busifavor_coupon_detail,
-                            marketing_busifavor_coupon_disassociate,
-                            marketing_busifavor_coupon_return,
-                            marketing_busifavor_coupon_use,
-                            marketing_busifavor_couponcode_upload,
-                            marketing_busifavor_stock_budget,
-                            marketing_busifavor_stock_create,
-                            marketing_busifavor_stock_modify,
-                            marketing_busifavor_stock_query,
-                            marketing_busifavor_subsidy_pay,
-                            marketing_busifavor_subsidy_query,
-                            marketing_busifavor_user_coupon,
-                            marketing_card_send,
-                            marketing_favor_callback_update,
-                            marketing_favor_coupon_detail,
-                            marketing_favor_refund_flow,
-                            marketing_favor_stock_create,
-                            marketing_favor_stock_detail,
-                            marketing_favor_stock_item,
-                            marketing_favor_stock_list,
-                            marketing_favor_stock_merchant,
-                            marketing_favor_stock_pause,
-                            marketing_favor_stock_restart,
-                            marketing_favor_stock_send,
-                            marketing_favor_stock_start,
-                            marketing_favor_use_flow,
-                            marketing_favor_user_coupon,
-                            marketing_image_upload,
-                            marketing_partnership_build,
-                            marketing_partnership_query,
-                            marketing_paygift_activity_create,
-                            marketing_paygift_activity_detail,
-                            marketing_paygift_activity_list,
-                            marketing_paygift_activity_terminate,
-                            marketing_paygift_goods_list,
-                            marketing_paygift_merchant_add,
-                            marketing_paygift_merchant_delete,
-                            marketing_paygift_merchants_list)
+    from .apply4subject import (
+        apply4subject_cancel,
+        apply4subject_query,
+        apply4subject_state,
+        apply4subject_submit,
+    )
+    from .applyment import (
+        applyment_query,
+        applyment_settlement_modify,
+        applyment_settlement_query,
+        applyment_submit,
+    )
+    from .businesscircle import (
+        business_parking_sync,
+        business_point_status,
+        points_notify,
+        user_authorization,
+    )
+    from .capital import (
+        capital_branches,
+        capital_cities,
+        capital_corporate_banks,
+        capital_personal_banks,
+        capital_provinces,
+        capital_search_bank_number,
+    )
+    from .complaint import (
+        complaint_complete,
+        complaint_detail_query,
+        complaint_history_query,
+        complaint_image_download,
+        complaint_image_upload,
+        complaint_list_query,
+        complaint_notification_create,
+        complaint_notification_delete,
+        complaint_notification_query,
+        complaint_notification_update,
+        complaint_response,
+        complaint_update_refund,
+    )
+    from .fapiao import (
+        fapiao_applications,
+        fapiao_card_template,
+        fapiao_insert_cards,
+        fapiao_merchant_base_info,
+        fapiao_merchant_config,
+        fapiao_query,
+        fapiao_reverse,
+        fapiao_set_merchant_config,
+        fapiao_tax_codes,
+        fapiao_title,
+        fapiao_title_url,
+        fapiao_upload_file,
+    )
+    from .goldplan import (
+        goldplan_advertising_close,
+        goldplan_advertising_filter,
+        goldplan_advertising_open,
+        goldplan_custompage_change,
+        goldplan_plan_change,
+    )
+    from .marketing import (
+        marketing_busifavor_callback_query,
+        marketing_busifavor_callback_update,
+        marketing_busifavor_coupon_associate,
+        marketing_busifavor_coupon_deactivate,
+        marketing_busifavor_coupon_detail,
+        marketing_busifavor_coupon_disassociate,
+        marketing_busifavor_coupon_return,
+        marketing_busifavor_coupon_use,
+        marketing_busifavor_couponcode_upload,
+        marketing_busifavor_stock_budget,
+        marketing_busifavor_stock_create,
+        marketing_busifavor_stock_modify,
+        marketing_busifavor_stock_query,
+        marketing_busifavor_subsidy_pay,
+        marketing_busifavor_subsidy_query,
+        marketing_busifavor_user_coupon,
+        marketing_card_send,
+        marketing_favor_callback_update,
+        marketing_favor_coupon_detail,
+        marketing_favor_refund_flow,
+        marketing_favor_stock_create,
+        marketing_favor_stock_detail,
+        marketing_favor_stock_item,
+        marketing_favor_stock_list,
+        marketing_favor_stock_merchant,
+        marketing_favor_stock_pause,
+        marketing_favor_stock_restart,
+        marketing_favor_stock_send,
+        marketing_favor_stock_start,
+        marketing_favor_use_flow,
+        marketing_favor_user_coupon,
+        marketing_image_upload,
+        marketing_partnership_build,
+        marketing_partnership_query,
+        marketing_paygift_activity_create,
+        marketing_paygift_activity_detail,
+        marketing_paygift_activity_list,
+        marketing_paygift_activity_terminate,
+        marketing_paygift_goods_list,
+        marketing_paygift_merchant_add,
+        marketing_paygift_merchant_delete,
+        marketing_paygift_merchants_list,
+    )
     from .media import image_upload, video_upload
-    from .merchantrisk import (merchantrisk_callback_create,
-                               merchantrisk_callback_delete,
-                               merchantrisk_callback_query,
-                               merchantrisk_callback_update)
-    from .parking import (parking_enter, parking_order, parking_order_query,
-                          parking_service_find)
-    from .payscore import (payscore_cancel, payscore_complete, payscore_create,
-                           payscore_direct_complete, payscore_merchant_bill,
-                           payscore_modify, payscore_pay, payscore_permission,
-                           payscore_permission_query,
-                           payscore_permission_terminate, payscore_query,
-                           payscore_refund, payscore_refund_query,
-                           payscore_sync)
-    from .profitsharing import (brand_profitsharing_add_receiver,
-                                brand_profitsharing_amount_query,
-                                brand_profitsharing_config_query,
-                                brand_profitsharing_delete_receiver,
-                                brand_profitsharing_order,
-                                brand_profitsharing_order_query,
-                                brand_profitsharing_return,
-                                brand_profitsharing_return_query,
-                                brand_profitsharing_unfreeze,
-                                profitsharing_add_receiver,
-                                profitsharing_amount_query, profitsharing_bill,
-                                profitsharing_config_query,
-                                profitsharing_delete_receiver,
-                                profitsharing_order, profitsharing_order_query,
-                                profitsharing_return,
-                                profitsharing_return_query,
-                                profitsharing_unfreeze)
-    from .smartguide import (guides_assign, guides_query, guides_register,
-                             guides_update)
-    from .transaction import (close, combine_close, combine_pay, combine_query,
-                              download_bill, fundflow_bill, pay, query,
-                              query_refund, refund, submch_fundflow_bill,
-                              trade_bill)
-    from .transfer import (transfer_batch, transfer_bill_receipt,
-                           transfer_detail_receipt, transfer_query_batchid,
-                           transfer_query_bill_receipt,
-                           transfer_query_detail_id,
-                           transfer_query_out_batch_no,
-                           transfer_query_out_detail_no,
-                           transfer_query_receipt)
+    from .merchantrisk import (
+        merchantrisk_callback_create,
+        merchantrisk_callback_delete,
+        merchantrisk_callback_query,
+        merchantrisk_callback_update,
+    )
+    from .parking import parking_enter, parking_order, parking_order_query, parking_service_find
+    from .payscore import (
+        payscore_cancel,
+        payscore_complete,
+        payscore_create,
+        payscore_direct_complete,
+        payscore_merchant_bill,
+        payscore_modify,
+        payscore_pay,
+        payscore_permission,
+        payscore_permission_query,
+        payscore_permission_terminate,
+        payscore_query,
+        payscore_refund,
+        payscore_refund_query,
+        payscore_sync,
+    )
+    from .profitsharing import (
+        brand_profitsharing_add_receiver,
+        brand_profitsharing_amount_query,
+        brand_profitsharing_config_query,
+        brand_profitsharing_delete_receiver,
+        brand_profitsharing_order,
+        brand_profitsharing_order_query,
+        brand_profitsharing_return,
+        brand_profitsharing_return_query,
+        brand_profitsharing_unfreeze,
+        profitsharing_add_receiver,
+        profitsharing_amount_query,
+        profitsharing_bill,
+        profitsharing_config_query,
+        profitsharing_delete_receiver,
+        profitsharing_order,
+        profitsharing_order_query,
+        profitsharing_return,
+        profitsharing_return_query,
+        profitsharing_unfreeze,
+    )
+    from .smartguide import guides_assign, guides_query, guides_register, guides_update
+    from .transaction import (
+        close,
+        combine_close,
+        combine_pay,
+        combine_query,
+        download_bill,
+        fundflow_bill,
+        pay,
+        query,
+        query_refund,
+        refund,
+        submch_fundflow_bill,
+        trade_bill,
+    )
+    from .transfer import (
+        transfer_batch,
+        transfer_bill_receipt,
+        transfer_detail_receipt,
+        transfer_query_batchid,
+        transfer_query_bill_receipt,
+        transfer_query_detail_id,
+        transfer_query_out_batch_no,
+        transfer_query_out_detail_no,
+        transfer_query_receipt,
+    )

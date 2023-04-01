@@ -3,7 +3,18 @@
 from .type import RequestType
 
 
-def points_notify(self, transaction_id, openid, earn_points, increased_points, points_update_time, no_points_remarks=None, total_points=None, appid=None, sub_mchid=None):
+def points_notify(
+    self,
+    transaction_id,
+    openid,
+    earn_points,
+    increased_points,
+    points_update_time,
+    no_points_remarks=None,
+    total_points=None,
+    appid=None,
+    sub_mchid=None,
+):
     """智慧商圈积分同步
     :param transaction_id: 微信订单号，示例值:'1217752501201407033233368018'
     :param openid: 用户标识，示例值:'oWmnN4xxxxxxxxxxe92NHIGf1xd8'
@@ -16,34 +27,34 @@ def points_notify(self, transaction_id, openid, earn_points, increased_points, p
     :param sub_mchid: (服务商模式)子商户的商户号，由微信支付生成并下发。示例值:'1900000109'
     """
     params = {}
-    params.update({'appid': appid or self._appid})
+    params.update({"appid": appid or self._appid})
     if transaction_id:
-        params.update({'transaction_id': transaction_id})
+        params.update({"transaction_id": transaction_id})
     else:
-        raise Exception('transaction_id is not assigned.')
+        raise Exception("transaction_id is not assigned.")
     if openid:
-        params.update({'openid': openid})
+        params.update({"openid": openid})
     else:
-        raise Exception('openid is not assigned.')
+        raise Exception("openid is not assigned.")
     if earn_points:
-        params.update({'earn_points': earn_points})
+        params.update({"earn_points": earn_points})
     else:
-        raise Exception('earn_points is not assigned.')
+        raise Exception("earn_points is not assigned.")
     if increased_points:
-        params.update({'increased_points': increased_points})
+        params.update({"increased_points": increased_points})
     else:
-        raise Exception('increased_points is not assigned')
+        raise Exception("increased_points is not assigned")
     if points_update_time:
-        params.update({'points_update_time': points_update_time})
+        params.update({"points_update_time": points_update_time})
     else:
-        raise Exception('points_update_time is not assigned.')
+        raise Exception("points_update_time is not assigned.")
     if no_points_remarks:
-        params.update({'no_points_remarks': no_points_remarks})
+        params.update({"no_points_remarks": no_points_remarks})
     if total_points:
-        params.update({'total_points': total_points})
+        params.update({"total_points": total_points})
     if self._partner_mode and sub_mchid:
-        params.update({'sub_mchid': sub_mchid})
-    path = '/v3/businesscircle/points/notify'
+        params.update({"sub_mchid": sub_mchid})
+    path = "/v3/businesscircle/points/notify"
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -55,17 +66,22 @@ def user_authorization(self, openid, appid=None, sub_mchid=None):
     """
     if openid:
         if self._partner_mode:
-            path = '/v3/businesscircle/user-authorizations/%s?appid=%s' % (openid, appid or self._appid)
+            path = "/v3/businesscircle/user-authorizations/%s?appid=%s" % (
+                openid,
+                appid or self._appid,
+            )
             if sub_mchid:
-                path = '%s&sub_mchid=%s' % (path, sub_mchid)
+                path = "%s&sub_mchid=%s" % (path, sub_mchid)
         else:
-            path = '/v3/businesscircle/user-authorizations/%s?appid=%s' % (openid, self._appid)
+            path = "/v3/businesscircle/user-authorizations/%s?appid=%s" % (openid, self._appid)
     else:
-        raise Exception('openid is not assigned.')
+        raise Exception("openid is not assigned.")
     return self._core.request(path)
 
 
-def business_parking_sync(self, openid, brandid, plate_number, state, time, appid=None, sub_mchid=None):
+def business_parking_sync(
+    self, openid, brandid, plate_number, state, time, appid=None, sub_mchid=None
+):
     """商圈会员停车状态同步
     :param openid: 用户标识，示例值:'oWmnN4xxxxxxxxxxe92NHIGf1xd8'
     :param brandid: 品牌ID，示例值:1000
@@ -76,33 +92,33 @@ def business_parking_sync(self, openid, brandid, plate_number, state, time, appi
     :param sub_mchid: (服务商模式)子商户的商户号，由微信支付生成并下发。示例值:'1900000109'
     """
     params = {}
-    params.update({'appid': appid or self._appid})
+    params.update({"appid": appid or self._appid})
     if not openid:
-        raise Exception('openid is not assigned.')
+        raise Exception("openid is not assigned.")
     else:
-        params.update({'openid': openid})
+        params.update({"openid": openid})
     if not brandid:
-        raise Exception('brandid is not assigned.')
+        raise Exception("brandid is not assigned.")
     else:
-        params.update({'brandid': brandid})
+        params.update({"brandid": brandid})
     if not plate_number:
-        raise Exception('plate_number is not assigned.')
+        raise Exception("plate_number is not assigned.")
     else:
-        params.update({'plate_number': plate_number})
+        params.update({"plate_number": plate_number})
     if not state:
-        raise Exception('state is not assigned.')
+        raise Exception("state is not assigned.")
     else:
-        params.update({'state': state})
+        params.update({"state": state})
     if not time:
-        raise Exception('time is not assigned.')
+        raise Exception("time is not assigned.")
     else:
-        params.update({'time': time})
+        params.update({"time": time})
     if self._partner_mode:
         if not sub_mchid:
-            raise Exception('sub_mchid is not assigned.')
+            raise Exception("sub_mchid is not assigned.")
         else:
-            params.update({'sub_mchid': sub_mchid})
-    path = 'https://api.mch.weixin.qq.com/v3/businesscircle/parkings'
+            params.update({"sub_mchid": sub_mchid})
+    path = "https://api.mch.weixin.qq.com/v3/businesscircle/parkings"
     return self._core.request(path, method=RequestType.POST, date=params)
 
 
@@ -114,9 +130,12 @@ def business_point_status(self, openid, brandid, appid=None, sub_mchid=None):
     :param sub_mchid: (服务商模式)子商户的商户号，由微信支付生成并下发。示例值:'1900000109'
     """
     if not (openid and brandid):
-        raise Exception('openid and/or brandid is not assigned.')
+        raise Exception("openid and/or brandid is not assigned.")
     else:
-        path = 'https://api.mch.weixin.qq.com/v3/businesscircle/users/%s/points/commit_status?brandid=%s&appid=%s' % (openid, brandid, appid or self._appid)
+        path = (
+            "https://api.mch.weixin.qq.com/v3/businesscircle/users/%s/points/commit_status?brandid=%s&appid=%s"
+            % (openid, brandid, appid or self._appid)
+        )
     if sub_mchid:
-        path += '%s&sub_mchid=%s' % (path, sub_mchid)
+        path += "%s&sub_mchid=%s" % (path, sub_mchid)
     return self._core.request(path)

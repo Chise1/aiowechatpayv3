@@ -6,7 +6,9 @@ from .media import _media_upload
 from .type import RequestType
 
 
-def complaint_list_query(self, begin_date=None, end_date=None, limit=10, offset=0, complainted_mchid=None):
+def complaint_list_query(
+    self, begin_date=None, end_date=None, limit=10, offset=0, complainted_mchid=None
+):
     """查询投诉单列表
     :param begin_date: 开始日期，投诉发生的开始日期，格式为YYYY-MM-DD。注意，查询日期跨度不超过30天，当前查询为实时查询。示例值:'2019-01-01'
     :param end_date: 结束日期，投诉发生的结束日期，格式为YYYY-MM-DD。注意，查询日期跨度不超过30天，当前查询为实时查询。示例值:'2019-01-01'
@@ -20,7 +22,7 @@ def complaint_list_query(self, begin_date=None, end_date=None, limit=10, offset=
         end_date = begin_date
     if not complainted_mchid:
         complainted_mchid = self._mchid
-    path = '/v3/merchant-service/complaints-v2?limit=%s&offset=%s&begin_date=%s&end_date=%s&complainted_mchid=%s'
+    path = "/v3/merchant-service/complaints-v2?limit=%s&offset=%s&begin_date=%s&end_date=%s&complainted_mchid=%s"
     path = path % (limit, offset, begin_date, end_date, complainted_mchid)
     return self._core.request(path)
 
@@ -30,8 +32,8 @@ def complaint_detail_query(self, complaint_id):
     :param complaint_id: 投诉单对应的投诉单号。示例值:'200201820200101080076610000'
     """
     if not complaint_id:
-        raise Exception('complaint_id is not assigned.')
-    path = '/v3/merchant-service/complaints-v2/%s' % complaint_id
+        raise Exception("complaint_id is not assigned.")
+    path = "/v3/merchant-service/complaints-v2/%s" % complaint_id
     return self._core.request(path)
 
 
@@ -42,10 +44,14 @@ def complaint_history_query(self, complaint_id, limit=100, offset=0):
     :param offset: 分页开始位置，该次请求的分页开始位置，从0开始计数，例如offset=10，表示从第11条记录开始返回，不传默认为0。示例值:10
     """
     if not complaint_id:
-        raise Exception('complaint_id is not assigned.')
+        raise Exception("complaint_id is not assigned.")
     if limit not in range(1, 301):
         limit = 100
-    path = '/v3/merchant-service/complaints-v2/%s/negotiation-historys?limit=%s&offset=%s' % (complaint_id, limit, offset)
+    path = "/v3/merchant-service/complaints-v2/%s/negotiation-historys?limit=%s&offset=%s" % (
+        complaint_id,
+        limit,
+        offset,
+    )
     return self._core.request(path)
 
 
@@ -55,10 +61,10 @@ def complaint_notification_create(self, url):
     """
     params = {}
     if url:
-        params.update({'url': url})
+        params.update({"url": url})
     else:
-        raise Exception('url is not assigned.')
-    path = '/v3/merchant-service/complaint-notifications'
+        raise Exception("url is not assigned.")
+    path = "/v3/merchant-service/complaint-notifications"
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -66,7 +72,7 @@ def complaint_notification_query(self):
     """查询投诉通知回调地址
     :param: url: 通知地址，仅支持https。示例值:'https://www.xxx.com/notify'
     """
-    path = '/v3/merchant-service/complaint-notifications'
+    path = "/v3/merchant-service/complaint-notifications"
     return self._core.request(path)
 
 
@@ -76,10 +82,10 @@ def complaint_notification_update(self, url):
     """
     params = {}
     if url:
-        params.update({'url': url})
+        params.update({"url": url})
     else:
-        raise Exception('url is not assigned.')
-    path = '/v3/merchant-service/complaint-notifications'
+        raise Exception("url is not assigned.")
+    path = "/v3/merchant-service/complaint-notifications"
     return self._core.request(path, method=RequestType.PUT, data=params)
 
 
@@ -87,11 +93,13 @@ def complaint_notification_delete(self):
     """删除投诉通知回调地址
     :param: url: 通知地址，仅支持https。示例值:'https://www.xxx.com/notify'
     """
-    path = '/v3/merchant-service/complaint-notifications'
+    path = "/v3/merchant-service/complaint-notifications"
     return self._core.request(path, method=RequestType.DELETE)
 
 
-def complaint_response(self, complaint_id, response_content, response_images=None, jump_url=None, jump_url_text=None):
+def complaint_response(
+    self, complaint_id, response_content, response_images=None, jump_url=None, jump_url_text=None
+):
     """提交投诉回复
     :param complaint_id: 投诉单对应的投诉单号。示例值:'200201820200101080076610000'
     :param response_content: 回复内容，具体的投诉处理方案，限制200个字符以内。示例值:'已与用户沟通解决'
@@ -101,19 +109,19 @@ def complaint_response(self, complaint_id, response_content, response_images=Non
     """
     params = {}
     if not complaint_id:
-        raise Exception('complaint_id is not assigned')
+        raise Exception("complaint_id is not assigned")
     if response_content:
-        params.update({'response_content': response_content})
+        params.update({"response_content": response_content})
     else:
-        raise Exception('response_content is not assigned')
-    params.update({'complainted_mchid': self._core._mchid})
+        raise Exception("response_content is not assigned")
+    params.update({"complainted_mchid": self._core._mchid})
     if response_images:
-        params.update({'response_images': response_images})
+        params.update({"response_images": response_images})
     if jump_url:
-        params.update({'jump_url': jump_url})
+        params.update({"jump_url": jump_url})
     if jump_url_text:
-        params.update({'jump_url_text': jump_url_text})
-    path = '/v3/merchant-service/complaints-v2/%s/response' % complaint_id
+        params.update({"jump_url_text": jump_url_text})
+    path = "/v3/merchant-service/complaints-v2/%s/response" % complaint_id
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -123,9 +131,9 @@ def complaint_complete(self, complaint_id):
     """
     params = {}
     if not complaint_id:
-        raise Exception('complaint_id is not assigned')
-    params.update({'complainted_mchid': self._core._mchid})
-    path = '/v3/merchant-service/complaints-v2/%s/complete' % complaint_id
+        raise Exception("complaint_id is not assigned")
+    params.update({"complainted_mchid": self._core._mchid})
+    path = "/v3/merchant-service/complaints-v2/%s/complete" % complaint_id
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -134,18 +142,30 @@ def complaint_image_upload(self, filepath, filename=None):
     :param filepath: 图片文件路径
     :param filename: 文件名称，未指定则从filepath参数中截取
     """
-    return _media_upload(self, filepath, filename, '/v3/merchant-service/images/upload')
+    return _media_upload(self, filepath, filename, "/v3/merchant-service/images/upload")
 
 
 def complaint_image_download(self, media_url):
     """下载客户投诉图片
     :param media_url: 图片下载地址，示例值:'https://api.mch.weixin.qq.com/v3/merchant-service/images/xxxxx'
     """
-    path = media_url[len(self._core._gate_way):] if media_url.startswith(self._core._gate_way) else media_url
+    path = (
+        media_url[len(self._core._gate_way) :]
+        if media_url.startswith(self._core._gate_way)
+        else media_url
+    )
     return self._core.request(path, skip_verify=True)
 
 
-def complaint_update_refund(self, complaint_id, action, launch_refund_day=None, reject_reason=None, reject_media_list={}, remark=None):
+def complaint_update_refund(
+    self,
+    complaint_id,
+    action,
+    launch_refund_day=None,
+    reject_reason=None,
+    reject_media_list={},
+    remark=None,
+):
     """更新退款审批结果
     :param compaint_id: 投诉单对应的投诉单号。示例值:'200201820200101080076610000'
     :param action: 审批动作，同意 或 拒绝，REJECT：拒绝，拒绝退款；APPROVE：同意，同意退款；示例值：'APPROVE'
@@ -155,20 +175,20 @@ def complaint_update_refund(self, complaint_id, action, launch_refund_day=None, 
     :param remark: 备注，示例值：'已处理完成'
     """
     if complaint_id:
-        path = '/v3/merchant-service/complaints-v2/%s/update-refund-progress' % complaint_id
+        path = "/v3/merchant-service/complaints-v2/%s/update-refund-progress" % complaint_id
     else:
-        raise Exception('complaint_id is not assigned')
+        raise Exception("complaint_id is not assigned")
     params = {}
     if action:
-        params.update({'action': action})
+        params.update({"action": action})
     else:
-        raise Exception('action is not assigned')
+        raise Exception("action is not assigned")
     if isinstance(launch_refund_day, int):
-        params.update({'launch_refund_day': launch_refund_day})
+        params.update({"launch_refund_day": launch_refund_day})
     if reject_reason:
-        params.update({'reject_reason': reject_reason})
+        params.update({"reject_reason": reject_reason})
     if reject_media_list:
-        params.update({'reject_media_list': reject_media_list})
+        params.update({"reject_media_list": reject_media_list})
     if remark:
-        params.update({'remark': remark})
+        params.update({"remark": remark})
     return self._core.request(path, method=RequestType.POST, data=params)

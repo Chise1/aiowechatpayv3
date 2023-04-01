@@ -10,14 +10,14 @@ def goldplan_plan_change(self, sub_mchid, operation_type):
     """
     params = {}
     if sub_mchid:
-        params.update({'sub_mchid': sub_mchid})
+        params.update({"sub_mchid": sub_mchid})
     else:
-        raise Exception('sub_mchid is not assigned.')
+        raise Exception("sub_mchid is not assigned.")
     if operation_type:
-        params.update({'operation_type': operation_type})
+        params.update({"operation_type": operation_type})
     else:
-        raise Exception('operation_type is not assigned.')
-    path = '/v3/goldplan/merchants/changegoldplanstatus'
+        raise Exception("operation_type is not assigned.")
+    path = "/v3/goldplan/merchants/changegoldplanstatus"
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -28,14 +28,14 @@ def goldplan_custompage_change(self, sub_mchid, operation_type):
     """
     params = {}
     if sub_mchid:
-        params.update({'sub_mchid': sub_mchid})
+        params.update({"sub_mchid": sub_mchid})
     else:
-        raise Exception('sub_mchid is not assigned.')
+        raise Exception("sub_mchid is not assigned.")
     if operation_type:
-        params.update({'operation_type': operation_type})
+        params.update({"operation_type": operation_type})
     else:
-        raise Exception('operation_type is not assigned.')
-    path = '/v3/goldplan/merchants/changecustompagestatus'
+        raise Exception("operation_type is not assigned.")
+    path = "/v3/goldplan/merchants/changecustompagestatus"
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -46,14 +46,14 @@ def goldplan_advertising_filter(self, sub_mchid, advertising_industry_filters):
     """
     params = {}
     if sub_mchid:
-        params.update({'sub_mchid': sub_mchid})
+        params.update({"sub_mchid": sub_mchid})
     else:
-        raise Exception('sub_mchid is not assigned.')
+        raise Exception("sub_mchid is not assigned.")
     if advertising_industry_filters:
-        params.update({'advertising_industry_filters': advertising_industry_filters})
+        params.update({"advertising_industry_filters": advertising_industry_filters})
     else:
-        raise Exception('advertising_industry_filters is not assigned.')
-    path = '/v3/goldplan/merchants/set-advertising-industry-filter'
+        raise Exception("advertising_industry_filters is not assigned.")
+    path = "/v3/goldplan/merchants/set-advertising-industry-filter"
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -64,14 +64,14 @@ def goldplan_advertising_open(self, sub_mchid, advertising_industry_filters=None
     """
     params = {}
     if sub_mchid:
-        params.update({'sub_mchid': sub_mchid})
+        params.update({"sub_mchid": sub_mchid})
     else:
-        raise Exception('sub_mchid is not assigned.')
+        raise Exception("sub_mchid is not assigned.")
     if advertising_industry_filters:
-        params.update({'advertising_industry_filters': advertising_industry_filters})
+        params.update({"advertising_industry_filters": advertising_industry_filters})
     else:
-        raise Exception('advertising_industry_filters is not assigned.')
-    path = '/v3/goldplan/merchants/open-advertising-show'
+        raise Exception("advertising_industry_filters is not assigned.")
+    path = "/v3/goldplan/merchants/open-advertising-show"
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
@@ -81,8 +81,8 @@ def goldplan_advertising_close(self, sub_mchid):
     """
     params = {}
     if sub_mchid:
-        params.update({'sub_mchid': sub_mchid})
+        params.update({"sub_mchid": sub_mchid})
     else:
-        raise Exception('sub_mchid is not assigned.')
-    path = '/v3/goldplan/merchants/close-advertising-show'
+        raise Exception("sub_mchid is not assigned.")
+    path = "/v3/goldplan/merchants/close-advertising-show"
     return self._core.request(path, method=RequestType.POST, data=params)

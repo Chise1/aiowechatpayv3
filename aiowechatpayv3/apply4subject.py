@@ -3,7 +3,16 @@
 from .type import RequestType
 
 
-def apply4subject_submit(self, business_code, contact_info, subject_info, identification_info, channel_id=None, addition_info=None, ubo_info_list=[]):
+def apply4subject_submit(
+    self,
+    business_code,
+    contact_info,
+    subject_info,
+    identification_info,
+    channel_id=None,
+    addition_info=None,
+    ubo_info_list=[],
+):
     """（商户开户意愿）提交申请单
     :param business_code: 业务申请编号，示例值:'APPLYMENT_00000000001'
     :param contact_info: 联系人信息，示例值:{'name':'张三','id_card_number':'320311770706001','mobile':'13900000000'}
@@ -16,51 +25,57 @@ def apply4subject_submit(self, business_code, contact_info, subject_info, identi
     """
     params = {}
     if business_code:
-        params.update({'business_code': business_code})
+        params.update({"business_code": business_code})
     else:
-        raise Exception('business_code is not assigned.')
+        raise Exception("business_code is not assigned.")
     if contact_info:
-        params.update({'contact_info': contact_info})
+        params.update({"contact_info": contact_info})
     else:
-        raise Exception('contact_info is not assigned.')
+        raise Exception("contact_info is not assigned.")
     if subject_info:
-        params.update({'subject_info': subject_info})
+        params.update({"subject_info": subject_info})
     else:
-        raise Exception('subject_info is not assigned.')
+        raise Exception("subject_info is not assigned.")
     if identification_info:
-        params.update({'identification_info': identification_info})
+        params.update({"identification_info": identification_info})
     else:
-        raise Exception('identification_info is not assigned')
+        raise Exception("identification_info is not assigned")
     if channel_id:
-        params.update({'channel_id': channel_id})
+        params.update({"channel_id": channel_id})
     if addition_info:
-        params.update({'addition_info': addition_info})
+        params.update({"addition_info": addition_info})
     if ubo_info_list:
-        params.update({'ubo_info_list': ubo_info_list})
-    contact_name = params.get('contact_info').get('name')
+        params.update({"ubo_info_list": ubo_info_list})
+    contact_name = params.get("contact_info").get("name")
     if contact_name:
-        params['contact_info']['name'] = self._core.encrypt(contact_name)
-    contact_mobile = params.get('contact_info').get('mobile')
+        params["contact_info"]["name"] = self._core.encrypt(contact_name)
+    contact_mobile = params.get("contact_info").get("mobile")
     if contact_mobile:
-        params['contact_info']['mobile'] = self._core.encrypt(contact_mobile)
-    contact_number = params.get('contact_info').get('id_card_number')
+        params["contact_info"]["mobile"] = self._core.encrypt(contact_mobile)
+    contact_number = params.get("contact_info").get("id_card_number")
     if contact_number:
-        params['contact_info']['id_card_number'] = self._core.encrypt(contact_number)
-    identification_name = params.get('identification_info').get('identification_name')
+        params["contact_info"]["id_card_number"] = self._core.encrypt(contact_number)
+    identification_name = params.get("identification_info").get("identification_name")
     if identification_name:
-        params['identification_info']['identification_name'] = self._core.encrypt(identification_name)
-    identification_number = params.get('identification_info').get('identification_number')
+        params["identification_info"]["identification_name"] = self._core.encrypt(
+            identification_name
+        )
+    identification_number = params.get("identification_info").get("identification_number")
     if identification_number:
-        params['identification_info']['identification_number'] = self._core.encrypt(identification_number)
-    identification_address = params.get('identification_info').get('identification_address')
+        params["identification_info"]["identification_number"] = self._core.encrypt(
+            identification_number
+        )
+    identification_address = params.get("identification_info").get("identification_address")
     if identification_address:
-        params['identification_info']['identification_address'] = self._core.encrypt(identification_address)
-    if params.get('ubo_info_list'):
-        for ubo_info in params['ubo_info_list']:
-            ubo_info['ubo_id_doc_name'] = self._core.encrypt(ubo_info['ubo_id_doc_name'])
-            ubo_info['ubo_id_doc_number'] = self._core.encrypt(ubo_info['ubo_id_doc_number'])
-            ubo_info['ubo_id_doc_address'] = self._core.encrypt(ubo_info['ubo_id_doc_address'])
-    path = '/v3/apply4subject/applyment'
+        params["identification_info"]["identification_address"] = self._core.encrypt(
+            identification_address
+        )
+    if params.get("ubo_info_list"):
+        for ubo_info in params["ubo_info_list"]:
+            ubo_info["ubo_id_doc_name"] = self._core.encrypt(ubo_info["ubo_id_doc_name"])
+            ubo_info["ubo_id_doc_number"] = self._core.encrypt(ubo_info["ubo_id_doc_number"])
+            ubo_info["ubo_id_doc_address"] = self._core.encrypt(ubo_info["ubo_id_doc_address"])
+    path = "/v3/apply4subject/applyment"
     return self._core.request(path, method=RequestType.POST, data=params, cipher_data=True)
 
 
@@ -70,11 +85,11 @@ def apply4subject_cancel(self, business_code=None, applyment_id=None):
     :param applyment_id: 申请单编号，示例值:2000001234567890
     """
     if business_code:
-        path = '/v3/apply4subject/applyment/%s/cancel' % business_code
+        path = "/v3/apply4subject/applyment/%s/cancel" % business_code
     elif applyment_id:
-        path = '/v3/apply4subject/applyment/%s/cancel' % applyment_id
+        path = "/v3/apply4subject/applyment/%s/cancel" % applyment_id
     else:
-        raise Exception('business_code or applyment_id is not assigned.')
+        raise Exception("business_code or applyment_id is not assigned.")
     return self._core.request(path)
 
 
@@ -84,11 +99,11 @@ def apply4subject_query(self, business_code=None, applyment_id=None):
     :param applyment_id: 申请单编号，示例值:2000001234567890
     """
     if business_code:
-        path = '/v3/apply4subject/applyment?business_code=%s' % business_code
+        path = "/v3/apply4subject/applyment?business_code=%s" % business_code
     elif applyment_id:
-        path = '/v3/apply4subject/applyment?applyment_id=%s' % applyment_id
+        path = "/v3/apply4subject/applyment?applyment_id=%s" % applyment_id
     else:
-        raise Exception('business_code or applyment_id is not assigned.')
+        raise Exception("business_code or applyment_id is not assigned.")
     return self._core.request(path)
 
 
@@ -97,7 +112,7 @@ def apply4subject_state(self, sub_mchid):
     :param sub_mchid: 特约商户号，示例值:'1511101111'
     """
     if sub_mchid:
-        path = '/v3/apply4subject/applyment/merchants/%s/state' % sub_mchid
+        path = "/v3/apply4subject/applyment/merchants/%s/state" % sub_mchid
     else:
-        raise Exception('sub_mchid is not assigned.')
+        raise Exception("sub_mchid is not assigned.")
     return self._core.request(path)

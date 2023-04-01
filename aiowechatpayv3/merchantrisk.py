@@ -9,15 +9,14 @@ def merchantrisk_callback_create(self, notify_url=None):
     """
     params = {}
     if notify_url:
-        params.update({'notify_url': notify_url})
-    path = '/v3/merchant-risk-manage/violation-notifications'
+        params.update({"notify_url": notify_url})
+    path = "/v3/merchant-risk-manage/violation-notifications"
     return self._core.request(path, method=RequestType.POST, data=params)
 
 
 def merchantrisk_callback_query(self):
-    """查询商户违规通知回调地址
-    """
-    path = '/v3/merchant-risk-manage/violation-notifications'
+    """查询商户违规通知回调地址"""
+    path = "/v3/merchant-risk-manage/violation-notifications"
     return self._core.request(path)
 
 
@@ -27,13 +26,12 @@ def merchantrisk_callback_update(self, notify_url=None):
     """
     params = {}
     if notify_url:
-        params.update({'notify_url': notify_url})
-    path = '/v3/merchant-risk-manage/violation-notifications'
+        params.update({"notify_url": notify_url})
+    path = "/v3/merchant-risk-manage/violation-notifications"
     return self._core.request(path, method=RequestType.PUT, data=params)
 
 
 def merchantrisk_callback_delete(self):
-    """查询商户违规通知回调地址
-    """
-    path = '/v3/merchant-risk-manage/violation-notifications'
+    """查询商户违规通知回调地址"""
+    path = "/v3/merchant-risk-manage/violation-notifications"
     return self._core.request(path, method=RequestType.DELETE)
