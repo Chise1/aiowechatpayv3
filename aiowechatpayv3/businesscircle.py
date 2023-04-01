@@ -3,7 +3,7 @@
 from .type import RequestType
 
 
-def points_notify(
+async def points_notify(
     self,
     transaction_id,
     openid,
@@ -55,10 +55,10 @@ def points_notify(
     if self._partner_mode and sub_mchid:
         params.update({"sub_mchid": sub_mchid})
     path = "/v3/businesscircle/points/notify"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def user_authorization(self, openid, appid=None, sub_mchid=None):
+async def user_authorization(self, openid, appid=None, sub_mchid=None):
     """智慧商圈积分授权查询
     :param openid: 用户标识，示例值:'oWmnN4xxxxxxxxxxe92NHIGf1xd8'
     :param appid: 小程序appid，顾客授权积分时使用的小程序的appid，默认传入初始化时的appid，示例值:'wx1234567890abcdef'
@@ -76,10 +76,10 @@ def user_authorization(self, openid, appid=None, sub_mchid=None):
             path = "/v3/businesscircle/user-authorizations/%s?appid=%s" % (openid, self._appid)
     else:
         raise Exception("openid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def business_parking_sync(
+async def business_parking_sync(
     self, openid, brandid, plate_number, state, time, appid=None, sub_mchid=None
 ):
     """商圈会员停车状态同步
@@ -119,10 +119,10 @@ def business_parking_sync(
         else:
             params.update({"sub_mchid": sub_mchid})
     path = "https://api.mch.weixin.qq.com/v3/businesscircle/parkings"
-    return self._core.request(path, method=RequestType.POST, date=params)
+    return await self._core.request(path, method=RequestType.POST, date=params)
 
 
-def business_point_status(self, openid, brandid, appid=None, sub_mchid=None):
+async def business_point_status(self, openid, brandid, appid=None, sub_mchid=None):
     """商圈会员待积分状态查询
     :param openid: 用户标识，示例值:'oWmnN4xxxxxxxxxxe92NHIGf1xd8'
     :param brandid: 品牌ID，示例值:1000
@@ -138,4 +138,4 @@ def business_point_status(self, openid, brandid, appid=None, sub_mchid=None):
         )
     if sub_mchid:
         path += "%s&sub_mchid=%s" % (path, sub_mchid)
-    return self._core.request(path)
+    return await self._core.request(path)

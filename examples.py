@@ -75,7 +75,7 @@ async def pay():
 
 
 @app.get('/pay_jsapi')
-def pay_jsapi():
+async def pay_jsapi():
     # 以jsapi下单为例，下单成功后，将prepay_id和其他必须的参数组合传递给JSSDK的wx.chooseWXPay接口唤起支付
     out_trade_no = ''.join(sample(ascii_letters + digits, 8))
     description = 'demo-description'
@@ -109,7 +109,7 @@ def pay_jsapi():
 
 
 @app.get('/pay_h5')
-def pay_h5():
+async def pay_h5():
     # 以h5下单为例，下单成功后，将获取的的h5_url传递给前端跳转唤起支付。
     out_trade_no = ''.join(sample(ascii_letters + digits, 8))
     description = 'demo-description'
@@ -126,7 +126,7 @@ def pay_h5():
 
 
 @app.get('/pay_miniprog')
-def pay_miniprog():
+async def pay_miniprog():
     # 以小程序下单为例，下单成功后，将prepay_id和其他必须的参数组合传递给小程序的wx.requestPayment接口唤起支付
     out_trade_no = ''.join(sample(ascii_letters + digits, 8))
     description = 'demo-description'
@@ -160,7 +160,7 @@ def pay_miniprog():
 
 
 @app.get('/pay_app')
-def pay_app():
+async def pay_app():
     # 以app下单为例，下单成功后，将prepay_id和其他必须的参数组合传递给IOS或ANDROID SDK接口唤起支付
     out_trade_no = ''.join(sample(ascii_letters + digits, 8))
     description = 'demo-description'
@@ -192,7 +192,7 @@ def pay_app():
 
 
 @app.post('/notify')
-def notify(request: Request):
+async def notify(request: Request):
     body = await request.body()
     result = wxpay.callback(request.headers, body)
     if result and result.get('event_type') == 'TRANSACTION.SUCCESS':

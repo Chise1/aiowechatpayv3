@@ -4,7 +4,7 @@ from .transaction import query_refund, refund
 from .type import RequestType
 
 
-def payscore_direct_complete(
+async def payscore_direct_complete(
     self,
     out_order_no,
     openid,
@@ -78,10 +78,10 @@ def payscore_direct_complete(
             raise Exception("notify_url is not assigned.")
         params.update({"notify_url": notify_url or self._notify_url})
     path = "/payscore/serviceorder/direct-complete"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def payscore_permission(self, service_id, authorization_code, notify_url=None, appid=None):
+async def payscore_permission(self, service_id, authorization_code, notify_url=None, appid=None):
     """商户预授权
     :param service_id: 服务ID。示例值:'500001'
     :param authorization_code: 授权协议号，户系统内部授权协议号，要求此参数只能由数字、大小写字母_-*组成，且在同一个商户号下唯一。示例值:'1234323JKHDFE1243252'
@@ -96,10 +96,10 @@ def payscore_permission(self, service_id, authorization_code, notify_url=None, a
     params.update({"authorization_code": authorization_code})
     params.update({"notify_url": notify_url or self._notify_url})
     path = "/v3/payscore/permissions"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def payscore_permission_query(self, service_id, authorization_code=None, openid=None):
+async def payscore_permission_query(self, service_id, authorization_code=None, openid=None):
     """查询用户授权记录（授权协议号或openid）
     :param service_id: 服务ID。示例值:'500001'
     :param authorization_code: 授权协议号，户系统内部授权协议号，要求此参数只能由数字、大小写字母_-*组成，且在同一个商户号下唯一。示例值:'1234323JKHDFE1243252'
@@ -120,10 +120,10 @@ def payscore_permission_query(self, service_id, authorization_code=None, openid=
         )
     else:
         raise Exception("authorization_code or openid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def payscore_permission_terminate(
+async def payscore_permission_terminate(
     self, service_id, reason, authorization_code=None, openid=None, appid=None
 ):
     """解除用户授权记录（授权协议号或openid）
@@ -145,10 +145,10 @@ def payscore_permission_terminate(
         path = "/v3/payscore/permissions/openid/%s/terminate" % openid
     else:
         raise Exception("authorization_code or openid is not assigned.")
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def payscore_create(
+async def payscore_create(
     self,
     out_order_no,
     service_id,
@@ -217,10 +217,10 @@ def payscore_create(
             raise Exception("openid is not assigned.")
     params.update({"notify_url": notify_url or self._notify_url})
     path = "/v3/payscore/serviceorder"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def payscore_query(self, service_id, out_order_no=None, query_id=None):
+async def payscore_query(self, service_id, out_order_no=None, query_id=None):
     """查询支付分订单
     :param service_id: 服务ID，该服务ID有本接口对应产品的权限。示例值:'500001'
     :param out_order_no: 商户服务订单号，商户系统内部服务订单号（不是交易单号），要求此参数只能由数字、大小写字母_-|*组成，且在同一个商户号下唯一。示例值:'1234323JKHDFE1243252'
@@ -236,10 +236,10 @@ def payscore_query(self, service_id, out_order_no=None, query_id=None):
         path = "%s&query_id=%s" % (path, query_id)
     else:
         raise Exception("out_order_no or query_id is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def payscore_cancel(self, out_order_no, service_id, reason, appid=None):
+async def payscore_cancel(self, out_order_no, service_id, reason, appid=None):
     """取消支付分订单
     :param out_order_no: 商户服务订单号，商户系统内部服务订单号（不是交易单号），要求此参数只能由数字、大小写字母_-|*组成，且在同一个商户号下唯一。示例值:'1234323JKHDFE1243252'
     :param service_id: 服务ID，该服务ID有本接口对应产品的权限。示例值:'500001'
@@ -261,10 +261,10 @@ def payscore_cancel(self, out_order_no, service_id, reason, appid=None):
     else:
         raise Exception("reason is not assigned.")
     params.update({"appid": appid or self._appid})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def payscore_modify(
+async def payscore_modify(
     self,
     out_order_no,
     service_id,
@@ -307,10 +307,10 @@ def payscore_modify(
     if post_discounts:
         params.update({"post_discounts": post_discounts})
     params.update({"appid": appid or self._appid})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def payscore_complete(
+async def payscore_complete(
     self,
     out_order_no,
     service_id,
@@ -362,10 +362,10 @@ def payscore_complete(
         params.update({"goods_tag": goods_tag})
     params.update({"profit_sharing": profit_sharing})
     params.update({"appid": appid or self._appid})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def payscore_pay(self, out_order_no, service_id, appid=None):
+async def payscore_pay(self, out_order_no, service_id, appid=None):
     """商户发起催收扣款
     :param out_order_no: 商户服务订单号，商户系统内部服务订单号（不是交易单号），要求此参数只能由数字、大小写字母_-|*组成，且在同一个商户号下唯一。示例值:'1234323JKHDFE1243252'
     :param service_id: 服务ID，该服务ID有本接口对应产品的权限。示例值:'500001'
@@ -381,10 +381,10 @@ def payscore_pay(self, out_order_no, service_id, appid=None):
     else:
         raise Exception("service_id is not assigned.")
     params.update({"appid": appid or self._appid})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def payscore_sync(
+async def payscore_sync(
     self, out_order_no, service_id, scene_type="Order_Paid", detail={"paid_time": None}, appid=None
 ):
     """同步服务订单信息
@@ -412,10 +412,10 @@ def payscore_sync(
     else:
         raise Exception("detail is not assigned.")
     params.update({"appid": appid or self._appid})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def payscore_refund(
+async def payscore_refund(
     self,
     transaction_id,
     out_refund_no,
@@ -446,14 +446,14 @@ def payscore_refund(
     )
 
 
-def payscore_refund_query(self, out_refund_no):
+async def payscore_refund_query(self, out_refund_no):
     """查询单笔退款
     :param out_refund_no: 商户退款单号，示例值:'1217752501201407033233368018'
     """
     return query_refund(self, out_refund_no=out_refund_no)
 
 
-def payscore_merchant_bill(
+async def payscore_merchant_bill(
     self, bill_date, service_id, tar_type="GZIP", encryption_algorithm="AEAD_AES_256_GCM"
 ):
     """商户申请获取对账单
@@ -475,4 +475,4 @@ def payscore_merchant_bill(
         path,
         encryption_algorithm if encryption_algorithm else "AEAD_AES_256_GCM",
     )
-    return self._core.request(path)
+    return await self._core.request(path)

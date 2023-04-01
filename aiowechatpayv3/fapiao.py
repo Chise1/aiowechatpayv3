@@ -7,7 +7,7 @@ from .utils import sm3
 # https://pay.weixin.qq.com/wiki/doc/apiv3/Offline/open/chapter4_8_1.shtml
 
 
-def fapiao_card_template(self, card_template_information, card_appid=None):
+async def fapiao_card_template(self, card_template_information, card_appid=None):
     """创建电子发票卡券模板
     :param card_template_information: 卡券模板信息。示例值:{'logo_url':'http://mmbiz.qpic.cn/mmbiz/iaL1LJM1mF9aRKPZJkmG8xX'}
     :param card_appid: 插卡公众号AppID，若是服务商模式，则可以是服务商申请的appid，也可以是子商户申请的appid；若是直连模式，则是直连商户申请的appid。示例值：wxb1170446a4c0a5a2
@@ -21,10 +21,10 @@ def fapiao_card_template(self, card_template_information, card_appid=None):
     else:
         raise Exception("card_template_information is not assigned.")
     path = "/v3/new-tax-control-fapiao/card-template"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def fapiao_set_merchant_config(self, callback_url=None):
+async def fapiao_set_merchant_config(self, callback_url=None):
     """配置开发选项
     :param callback_url: 商户回调地址。收取微信的授权通知、开票通知、插卡通知等相关通知。示例值：'https://pay.weixin.qq.com/callback'
     """
@@ -33,16 +33,16 @@ def fapiao_set_merchant_config(self, callback_url=None):
     params = {}
     params.update({"callback_url": callback_url})
     path = "/v3/new-tax-control-fapiao/merchant/development-config"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def fapiao_merchant_config(self):
+async def fapiao_merchant_config(self):
     """查询商户配置的开发选项"""
     path = "/v3/new-tax-control-fapiao/merchant/development-config"
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def fapiao_title_url(
+async def fapiao_title_url(
     self,
     fapiao_apply_id,
     source,
@@ -98,10 +98,10 @@ def fapiao_title_url(
         path += "&show_email_cell=true"
     if must_input_email:
         path += "&must_input_email=true"
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def fapiao_title(self, fapiao_apply_id, scene="WITH_WECHATPAY"):
+async def fapiao_title(self, fapiao_apply_id, scene="WITH_WECHATPAY"):
     """获取用户填写的抬头
     :param fapiao_apply_id: 发票申请单号，示例值：'4200000444201910177461284488'
     :param scene: 场景值，目前只支持WITH_WECHATPAY。示例值：'WITH_WECHATPAY'
@@ -112,25 +112,25 @@ def fapiao_title(self, fapiao_apply_id, scene="WITH_WECHATPAY"):
     else:
         raise Exception("fapiao_apply_id is not assigned.")
     path += "&scene=%s" % scene
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def fapiao_tax_codes(self, offset=0, limit=20):
+async def fapiao_tax_codes(self, offset=0, limit=20):
     """获取商品和服务税收分类对照表
     :param offset: 查询的起始位置，示例值：0
     :param limit: 查询的最大数量，最大值20
     """
     path = "/v3/new-tax-control-fapiao/merchant/tax-codes?offset=%s&limit=%s" % (offset, limit)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def fapiao_merchant_base_info(self):
+async def fapiao_merchant_base_info(self):
     """获取商户开票基础信息"""
     path = "/v3/new-tax-control-fapiao/merchant/base-information"
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def fapiao_applications(
+async def fapiao_applications(
     self, fapiao_apply_id, buyer_information, fapiao_information, scene="WITH_WECHATPAY"
 ):
     """开具电子发票
@@ -161,10 +161,12 @@ def fapiao_applications(
         raise Exception("fapiao_information is not assigned.")
     params.update({"scene": scene})
     path = "/v3/new-tax-control-fapiao/fapiao-applications"
-    return self._core.request(path, method=RequestType.POST, data=params, cipher_data=cipher_data)
+    return await self._core.request(
+        path, method=RequestType.POST, data=params, cipher_data=cipher_data
+    )
 
 
-def fapiao_query(self, fapiao_apply_id, fapiao_id=None):
+async def fapiao_query(self, fapiao_apply_id, fapiao_id=None):
     """查询电子发票
     :param fapiao_apply_id: 发票申请单号，示例值：'4200000444201910177461284488'
     :param fapiao_id: 商户发票单号，示例值：'20200701123456'
@@ -172,10 +174,10 @@ def fapiao_query(self, fapiao_apply_id, fapiao_id=None):
     path = "/v3/new-tax-control-fapiao/fapiao-applications/%s" % fapiao_apply_id
     if fapiao_id:
         path += "?fapiao_id=%s" % fapiao_id
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def fapiao_reverse(self, fapiao_apply_id, reverse_reason, fapiao_information):
+async def fapiao_reverse(self, fapiao_apply_id, reverse_reason, fapiao_information):
     """冲红电子发票
     :param fapiao_apply_id: 发票申请单号，示例值：'4200000444201910177461284488'
     :param reverse_reason: 冲红原因，示例值：'退款'
@@ -194,10 +196,10 @@ def fapiao_reverse(self, fapiao_apply_id, reverse_reason, fapiao_information):
         params.update({"fapiao_information": fapiao_information})
     else:
         raise Exception("fapiao_information is not assigned.")
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def fapiao_upload_file(self, filepath):
+async def fapiao_upload_file(self, filepath):
     """上传电子发票文件
     :filepath: 电子发票文件路径，只支持pdf和odf两种格式，示例值：'./fapiao/0001.pdf'
     """
@@ -219,12 +221,12 @@ def fapiao_upload_file(self, filepath):
     )
     files = [("file", (filename, content, mimes[filetype]))]
     path = "/v3/new-tax-control-fapiao/fapiao-applications/upload-fapiao-file"
-    return self._core.request(
+    return await self._core.request(
         path, method=RequestType.POST, data=params, sign_data=params.get("meta"), files=files
     )
 
 
-def fapiao_insert_cards(
+async def fapiao_insert_cards(
     self, fapiao_apply_id, buyer_information, fapiao_card_information, scene="WITH_WECHATPAY"
 ):
     """将电子发票插入微信用户卡包
@@ -247,4 +249,4 @@ def fapiao_insert_cards(
     else:
         raise Exception("fapiao_card_information is not assigned.")
     params.update({"scene": scene})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)

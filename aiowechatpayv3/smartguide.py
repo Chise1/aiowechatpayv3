@@ -3,7 +3,7 @@
 from .type import RequestType
 
 
-def guides_register(
+async def guides_register(
     self, corpid, store_id, userid, name, mobile, qr_code, avatar, group_qrcode=None, sub_mchid=None
 ):
     """服务人员注册
@@ -51,10 +51,10 @@ def guides_register(
     if self._partner_mode and sub_mchid:
         params.update({"sub_mchid": sub_mchid})
     path = "/v3/smartguide/guides"
-    return self._core.request(path, method=RequestType.POST, data=params, cipher_data=True)
+    return await self._core.request(path, method=RequestType.POST, data=params, cipher_data=True)
 
 
-def guides_assign(self, guide_id, out_trade_no, sub_mchid=None):
+async def guides_assign(self, guide_id, out_trade_no, sub_mchid=None):
     """服务人员分配
     :param guide_id: 服务人员ID，示例值:'LLA3WJ6DSZUfiaZDS79FH5Wm5m4X69TBic'
     :param out_trade_no: 商户订单号, 示例值:'20150806125346'
@@ -71,10 +71,10 @@ def guides_assign(self, guide_id, out_trade_no, sub_mchid=None):
         path = "/v3/smartguide/guides/%s/assign" % guide_id
     else:
         raise Exception("guide_id is not assigned.")
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def guides_query(
+async def guides_query(
     self, store_id, userid=None, mobile=None, work_id=None, limit=None, offset=0, sub_mchid=None
 ):
     """服务人员查询
@@ -103,10 +103,10 @@ def guides_query(
         path = "%s&offset=%s" % (path, offset)
     if self._partner_mode and sub_mchid:
         path = "%s&sub_mchid=%s" % (path, sub_mchid)
-    return self._core.request(path, cipher_data=cipher_data)
+    return await self._core.request(path, cipher_data=cipher_data)
 
 
-def guides_update(
+async def guides_update(
     self,
     guide_id,
     name=None,
@@ -144,4 +144,6 @@ def guides_update(
         params.update({"group_qrcode": group_qrcode})
     if self._partner_mode and sub_mchid:
         params.update({"sub_mchid": sub_mchid})
-    return self._core.request(path, method=RequestType.PATCH, data=params, cipher_data=cipher_data)
+    return await self._core.request(
+        path, method=RequestType.PATCH, data=params, cipher_data=cipher_data
+    )

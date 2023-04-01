@@ -7,7 +7,7 @@ from .type import RequestType
 from .utils import sha256
 
 
-def marketing_image_upload(self, filepath, filename=None):
+async def marketing_image_upload(self, filepath, filename=None):
     """图片上传(营销专用)
     :param filepath: 图片文件路径
     :param filename: 文件名称，未指定则从filepath参数中截取
@@ -15,7 +15,7 @@ def marketing_image_upload(self, filepath, filename=None):
     return _media_upload(self, filepath, filename, "/v3/marketing/favor/media/image-upload")
 
 
-def marketing_card_send(self, card_id, openid, out_request_no, send_time, appid=None):
+async def marketing_card_send(self, card_id, openid, out_request_no, send_time, appid=None):
     """发放消费卡
     :card_id: 消费卡ID。示例值:'pIJMr5MMiIkO_93VtPyIiEk2DZ4w'
     :openid: 用户openid，待发卡用户的openid。示例值:'obLatjhnqgy2syxrXVM3MJirbkdI'
@@ -41,10 +41,10 @@ def marketing_card_send(self, card_id, openid, out_request_no, send_time, appid=
     else:
         raise Exception("send_time is not assigned.")
     params.update({"appid": appid or self._appid})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_partnership_build(
+async def marketing_partnership_build(
     self,
     idempotency_key,
     partner_type,
@@ -77,10 +77,10 @@ def marketing_partnership_build(
         raise Exception("invalid value in bussiness_type/stock_id.")
     params.update({"authorized_data": {"bussiness_type": business_type, "stock_id": stock_id}})
     path = "/v3/marketing/partnerships/build"
-    return self._core.request(path, method=RequestType.POST, data=params, headers=headers)
+    return await self._core.request(path, method=RequestType.POST, data=params, headers=headers)
 
 
-def marketing_partnership_query(
+async def marketing_partnership_query(
     self,
     business_type,
     stock_id,
@@ -119,10 +119,10 @@ def marketing_partnership_query(
         path = "%s&limit=%s" % (path, limit)
     if offset:
         path = "%s&offset=%s" % (path, offset)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_paygift_activity_create(
+async def marketing_paygift_activity_create(
     self, activity_base_info, award_send_rule, advanced_setting=None
 ):
     """创建全场满额送活动
@@ -138,10 +138,10 @@ def marketing_paygift_activity_create(
     if advanced_setting:
         params.update({"advanced_setting": advanced_setting})
     path = "/v3/marketing/paygiftactivity/unique-threshold-activity"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_paygift_activity_detail(self, activity_id):
+async def marketing_paygift_activity_detail(self, activity_id):
     """查询活动详情接口
     :param activity_id: 活动id，示例值:'10028001'
     """
@@ -149,10 +149,10 @@ def marketing_paygift_activity_detail(self, activity_id):
         path = "/v3/marketing/paygiftactivity/activities/%s" % activity_id
     else:
         raise Exception("activity_id is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_paygift_merchants_list(self, activity_id, offset=0, limit=20):
+async def marketing_paygift_merchants_list(self, activity_id, offset=0, limit=20):
     """查询活动发券商户号
     :param activity_id: 活动id，示例值:'10028001'
     :param offset:分页页码，页面从0开始。示例值:1
@@ -163,10 +163,10 @@ def marketing_paygift_merchants_list(self, activity_id, offset=0, limit=20):
     else:
         raise Exception("activity_id is not assigned.")
     path = "%s?offset=%s&limit=%s" % (path, offset, limit)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_paygift_goods_list(self, activity_id, offset=0, limit=20):
+async def marketing_paygift_goods_list(self, activity_id, offset=0, limit=20):
     """查询活动指定商品列表
     :param activity_id: 活动id，示例值:'10028001'
     :param offset:分页页码，页面从0开始。示例值:1
@@ -177,10 +177,10 @@ def marketing_paygift_goods_list(self, activity_id, offset=0, limit=20):
     else:
         raise Exception("activity_id is not assigned.")
     path = "%s?offset=%s&limit=%s" % (path, offset, limit)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_paygift_activity_terminate(self, activity_id):
+async def marketing_paygift_activity_terminate(self, activity_id):
     """终止活动
     :param activity_id: 活动id，示例值:'10028001'
     """
@@ -188,15 +188,17 @@ def marketing_paygift_activity_terminate(self, activity_id):
         path = "/v3/marketing/paygiftactivity/activities/%s/terminate" % activity_id
     else:
         raise Exception("activity_id is not assigned.")
-    return self._core.request(path, method=RequestType.POST)
+    return await self._core.request(path, method=RequestType.POST)
 
 
-def marketing_paygift_merchant_add(self, activity_id, add_request_no, merchant_id_list=[]):
+async def marketing_paygift_merchant_add(self, activity_id, add_request_no, merchant_id_list=None):
     """新增活动发券商户号
     :param activity_id: 活动id，示例值:'10028001'
     :param add_request_no: 请求业务单据号，商户添加发券商户号的凭据号，商户侧需保持唯一性。示例值:'100002322019090134234sfdf'
     :param merchant_id_list: 发券商户号，新增到活动中的发券商户号列表，特殊规则:最小字符长度为8，最大为15，条目个数限制:[1，500]。示例值:["10000022"，"10000023"]
     """
+    if merchant_id_list is None:
+        merchant_id_list = []
     if activity_id:
         path = "/v3/marketing/paygiftactivity/activities/%s/merchants/add" % activity_id
     else:
@@ -208,10 +210,10 @@ def marketing_paygift_merchant_add(self, activity_id, add_request_no, merchant_i
         raise Exception("add_request_no is not assigned.")
     if merchant_id_list:
         params.update({"merchant_id_list": merchant_id_list})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_paygift_activity_list(
+async def marketing_paygift_activity_list(
     self, offset=0, limit=20, activity_name=None, activity_status=None, award_type=None
 ):
     """获取支付有礼活动列表
@@ -232,17 +234,19 @@ def marketing_paygift_activity_list(
     if award_type:
         params.update({"award_type": award_type})
     path = "/v3/marketing/paygiftactivity/activities"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_paygift_merchant_delete(
-    self, activity_id, merchant_id_list=[], delete_request_no=None
+async def marketing_paygift_merchant_delete(
+    self, activity_id, merchant_id_list=None, delete_request_no=None
 ):
     """删除活动发券商户号
     :param activity_id: 活动id，示例值:'10028001'
     :param delete_request_no: 请求业务单据号，商户创建批次凭据号（格式:商户id+日期+流水号），商户侧需保持唯一性，可包含英文字母，数字，｜，_，*，-等内容，不允许出现其他不合法符号。示例值:'100002322019090134234sfdf'
     :param merchant_id_list: 删除的发券商户号，从活动已有的发券商户号中移除的商户号列表，特殊规则:最小字符长度为8，最大为15，条目个数限制:[1，500]。示例值:["10000022"，"10000023"]
     """
+    if merchant_id_list is None:
+        merchant_id_list = []
     if activity_id:
         path = "/v3/marketing/paygiftactivity/activities/%s/merchants/delete" % activity_id
     else:
@@ -252,10 +256,10 @@ def marketing_paygift_merchant_delete(
         params.update({"merchant_id_list": merchant_id_list})
     if delete_request_no:
         params.update({"delete_request_no": delete_request_no})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_favor_stock_create(
+async def marketing_favor_stock_create(
     self,
     stock_name,
     belong_merchant,
@@ -326,10 +330,10 @@ def marketing_favor_stock_create(
     if ext_info:
         params.update({"ext_info": ext_info})
     path = "/v3/marketing/favor/coupon-stocks"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_favor_stock_start(self, stock_creator_mchid, stock_id):
+async def marketing_favor_stock_start(self, stock_creator_mchid, stock_id):
     """激活代金券批次
     :param stock_creator_mchid: 创建批次的商户号，示例值:'8956000'
     :param stock_id: 批次号，示例值:'9856000'
@@ -343,10 +347,10 @@ def marketing_favor_stock_start(self, stock_creator_mchid, stock_id):
         path = "/v3/marketing/favor/stocks/%s/start" % stock_id
     else:
         raise Exception("stock_id is not assigned.")
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_favor_stock_send(
+async def marketing_favor_stock_send(
     self,
     stock_id,
     openid,
@@ -387,10 +391,10 @@ def marketing_favor_stock_send(
     if coupon_minimum:
         params.update({"coupon_minimum": coupon_minimum})
     params.update({"appid": appid or self._appid})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_favor_stock_pause(self, stock_creator_mchid, stock_id):
+async def marketing_favor_stock_pause(self, stock_creator_mchid, stock_id):
     """暂停代金券批次
     :param stock_creator_mchid: 创建批次的商户号，示例值:'8956000'
     :param stock_id: 批次号，示例值:'9856000'
@@ -404,10 +408,10 @@ def marketing_favor_stock_pause(self, stock_creator_mchid, stock_id):
         path = "/v3/marketing/favor/stocks/%s/pause" % stock_id
     else:
         raise Exception("stock_id is not assigned.")
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_favor_stock_restart(self, stock_creator_mchid, stock_id):
+async def marketing_favor_stock_restart(self, stock_creator_mchid, stock_id):
     """重启代金券批次
     :param stock_creator_mchid: 创建批次的商户号，示例值:'8956000'
     :param stock_id: 批次号，示例值:'9856000'
@@ -421,10 +425,10 @@ def marketing_favor_stock_restart(self, stock_creator_mchid, stock_id):
         path = "/v3/marketing/favor/stocks/%s/restart" % stock_id
     else:
         raise Exception("stock_id is not assigned.")
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_favor_stock_list(
+async def marketing_favor_stock_list(
     self,
     stock_creator_mchid,
     offset=0,
@@ -455,10 +459,10 @@ def marketing_favor_stock_list(
         path = "%s&create_end_time=%s" % (path, create_end_time)
     if status:
         path = "%s&status=%s" % (path, status)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_favor_stock_detail(self, stock_creator_mchid, stock_id):
+async def marketing_favor_stock_detail(self, stock_creator_mchid, stock_id):
     """查询批次详情
     :param stock_creator_mchid: 创建批次的商户号，示例值:'8956000'
     :param stock_id: 批次号，示例值:'9856000'
@@ -471,10 +475,10 @@ def marketing_favor_stock_detail(self, stock_creator_mchid, stock_id):
         path = "%s?stock_creator_mchid=%s" % (path, stock_creator_mchid)
     else:
         raise Exception("stock_creator_mchid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_favor_coupon_detail(self, coupon_id, openid):
+async def marketing_favor_coupon_detail(self, coupon_id, openid):
     """查询代金券详情
     :param coupon_id: 代金券id，示例值:'9856888'
     :param openid: 用户openid，示例值:'2323dfsdf342342'
@@ -483,10 +487,10 @@ def marketing_favor_coupon_detail(self, coupon_id, openid):
         path = "/v3/marketing/favor/users/%s/coupons/%s?appid=%s" % (openid, coupon_id, self._appid)
     else:
         raise Exception("coupon_id or openid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_favor_stock_merchant(self, stock_creator_mchid, stock_id, offset=0, limit=50):
+async def marketing_favor_stock_merchant(self, stock_creator_mchid, stock_id, offset=0, limit=50):
     """查询代金券可用商户
     :param stock_creator_mchid: 创建批次的商户号，示例值:'8956000'
     :param stock_id: 批次号，示例值:'9856000'
@@ -504,10 +508,10 @@ def marketing_favor_stock_merchant(self, stock_creator_mchid, stock_id, offset=0
             offset,
             limit,
         )
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_favor_stock_item(self, stock_creator_mchid, stock_id, offset=0, limit=50):
+async def marketing_favor_stock_item(self, stock_creator_mchid, stock_id, offset=0, limit=50):
     """查询代金券可用单品
     :param stock_creator_mchid: 创建批次的商户号，示例值:'8956000'
     :param stock_id: 批次号，示例值:'9856000'
@@ -525,10 +529,10 @@ def marketing_favor_stock_item(self, stock_creator_mchid, stock_id, offset=0, li
             offset,
             limit,
         )
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_favor_user_coupon(
+async def marketing_favor_user_coupon(
     self,
     openid,
     stock_id=None,
@@ -568,10 +572,10 @@ def marketing_favor_user_coupon(
         path = "%s&sender_mchid=%s" % (path, sender_mchid)
     elif available_mchid:
         path = "%s&available_mchid=%s" % (path, available_mchid)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_favor_use_flow(self, stock_id):
+async def marketing_favor_use_flow(self, stock_id):
     """下载批次核销明细
     :param stock_id: 批次号，微信为每个代金券批次分配的唯一id。示例值:'9865000'
     """
@@ -579,10 +583,10 @@ def marketing_favor_use_flow(self, stock_id):
         path = "/v3/marketing/favor/stocks/%s/use-flow" % stock_id
     else:
         raise Exception("stock_id is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_favor_refund_flow(self, stock_id):
+async def marketing_favor_refund_flow(self, stock_id):
     """下载批次退款明细
     :param stock_id: 批次号，微信为每个代金券批次分配的唯一id。示例值:'9865000'
     """
@@ -590,10 +594,10 @@ def marketing_favor_refund_flow(self, stock_id):
         path = "/v3/marketing/favor/stocks/%s/refund-flow" % stock_id
     else:
         raise Exception("stock_id is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_favor_callback_update(self, notify_url=None, switch=True, mchid=None):
+async def marketing_favor_callback_update(self, notify_url=None, switch=True, mchid=None):
     """设置消息通知地址
     :param notify_url: 支付通知商户url地址。示例值:'https://pay.weixin.qq.com'
     :param switch: 回调开关，枚举值:True:开启推送，False:停止推送。示例值:True
@@ -606,10 +610,10 @@ def marketing_favor_callback_update(self, notify_url=None, switch=True, mchid=No
     params.update({"notify_url": notify_url or self._notify_url})
     params.update({"switch": switch})
     path = "/v3/marketing/favor/callbacks"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_busifavor_stock_create(
+async def marketing_busifavor_stock_create(
     self,
     stock_name,
     belong_merchant,
@@ -683,10 +687,10 @@ def marketing_busifavor_stock_create(
         params.update({"notify_config": notify_config})
     params.update({"subsidy": subsidy})
     path = "/v3/marketing/busifavor/stocks"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_busifavor_stock_query(self, stock_id):
+async def marketing_busifavor_stock_query(self, stock_id):
     """查询商家券详情
     :param stock_id: 批次号。示例值:1212
     """
@@ -694,10 +698,10 @@ def marketing_busifavor_stock_query(self, stock_id):
         path = "/v3/marketing/busifavor/stocks/%s" % stock_id
     else:
         raise Exception("stock_id is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_busifavor_coupon_use(
+async def marketing_busifavor_coupon_use(
     self, coupon_code, use_time, use_request_no, stock_id=None, openid=None, appid=None
 ):
     """核销用户券
@@ -727,10 +731,10 @@ def marketing_busifavor_coupon_use(
         params.update({"openid": openid})
     params.update({"appid": appid or self._appid})
     path = "/v3/marketing/busifavor/coupons/use"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_busifavor_user_coupon(
+async def marketing_busifavor_user_coupon(
     self,
     openid,
     stock_id=None,
@@ -770,10 +774,10 @@ def marketing_busifavor_user_coupon(
         path = "%s&belong_merchant=%s" % (path, belong_merchant)
     if sender_merchant:
         path = "%s&sender_merchant=%s" % (path, sender_merchant)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_busifavor_coupon_detail(self, coupon_code, openid):
+async def marketing_busifavor_coupon_detail(self, coupon_code, openid):
     """查询用户单张券详情
     :param coupon_code: 券code，券的唯一标识。示例值:'sxxe34343434'
     :param openid: 用户标识。示例值:'xsd3434454567676'
@@ -785,15 +789,19 @@ def marketing_busifavor_coupon_detail(self, coupon_code, openid):
         coupon_code,
         self._appid,
     )
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_busifavor_couponcode_upload(self, stock_id, upload_request_no, coupon_code_list=[]):
+async def marketing_busifavor_couponcode_upload(
+    self, stock_id, upload_request_no, coupon_code_list=None
+):
     """上传预存code
     :param stock_id: 批次号。示例值:1212
     :param upload_request_no: 请求业务单据号。商户上传code的凭据号，商户侧需保持唯一性。示例值:'100002322019090134234sfdf'
     :param coupon_code_list: 券code列表。示例值:['ABC9588200'，'ABC9588201']
     """
+    if coupon_code_list is None:
+        coupon_code_list = []
     params = {}
     if stock_id:
         path = "/v3/marketing/busifavor/stocks/%s/couponcodes" % stock_id
@@ -805,10 +813,10 @@ def marketing_busifavor_couponcode_upload(self, stock_id, upload_request_no, cou
         raise Exception("upload_request_no is not assigned.")
     if coupon_code_list:
         params.update({"coupon_code_list": coupon_code_list})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_busifavor_callback_update(self, mchid=None, notify_url=None):
+async def marketing_busifavor_callback_update(self, mchid=None, notify_url=None):
     """设置商家券事件通知地址
     :param mchid: 商户号，可不填，默认传入初始化的mchid。示例值:'10000098'
     :param notify_url: 通知URL地址，用于接收商家券事件通知的url地址，不填默认使用初始化的notify_url。示例值:'https://pay.weixin.qq.com'
@@ -819,18 +827,20 @@ def marketing_busifavor_callback_update(self, mchid=None, notify_url=None):
         raise Exception("notify_url is not assigned.")
     params.update({"notify_url": notify_url or self._notify_url})
     path = "/v3/marketing/busifavor/callbacks"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_busifavor_callback_query(self, mchid=None):
+async def marketing_busifavor_callback_query(self, mchid=None):
     """查询商家券事件通知地址
     :param mchid: 商户号，不填默认使用初始化的mchid。示例值:'10000098'
     """
     path = "/v3/marketing/busifavor/callbacks?mchid=%s" % (mchid or self._mchid)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def marketing_busifavor_coupon_associate(self, stock_id, coupon_code, out_trade_no, out_request_no):
+async def marketing_busifavor_coupon_associate(
+    self, stock_id, coupon_code, out_trade_no, out_request_no
+):
     """关联订单信息
     :param stock_id: 批次号。示例值:1212
     :param coupon_code: 券code，券的唯一标识。示例值:'sxxe34343434'
@@ -855,10 +865,10 @@ def marketing_busifavor_coupon_associate(self, stock_id, coupon_code, out_trade_
     else:
         raise Exception("out_request_no is not assigned.")
     path = "/v3/marketing/busifavor/coupons/associate"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_busifavor_coupon_disassociate(
+async def marketing_busifavor_coupon_disassociate(
     self, stock_id, coupon_code, out_trade_no, out_request_no
 ):
     """取消关联订单信息
@@ -885,10 +895,10 @@ def marketing_busifavor_coupon_disassociate(
     else:
         raise Exception("out_request_no is not assigned.")
     path = "/v3/marketing/busifavor/coupons/disassociate"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_busifavor_stock_budget(
+async def marketing_busifavor_stock_budget(
     self,
     stock_id,
     modify_budget_request_no,
@@ -924,10 +934,10 @@ def marketing_busifavor_stock_budget(
         params.update({"current_max_coupons": current_max_coupons})
     if current_max_coupons_by_day:
         params.update({"current_max_coupons_by_day": current_max_coupons_by_day})
-    return self._core.request(path, method=RequestType.PATCH, data=params)
+    return await self._core.request(path, method=RequestType.PATCH, data=params)
 
 
-def marketing_busifavor_stock_modify(
+async def marketing_busifavor_stock_modify(
     self,
     stock_id,
     out_request_no,
@@ -973,10 +983,10 @@ def marketing_busifavor_stock_modify(
         params.update({"stock_send_rule": stock_send_rule})
     if notify_config:
         params.update({"notify_config": notify_config})
-    return self._core.request(path, method=RequestType.PATCH, data=params)
+    return await self._core.request(path, method=RequestType.PATCH, data=params)
 
 
-def marketing_busifavor_coupon_return(self, coupon_code, stock_id, return_request_no):
+async def marketing_busifavor_coupon_return(self, coupon_code, stock_id, return_request_no):
     """申请退券
     :param coupon_code: 券code，券的唯一标识。示例值:'sxxe34343434'
     :param stock_id: 批次号。示例值:1212
@@ -996,10 +1006,10 @@ def marketing_busifavor_coupon_return(self, coupon_code, stock_id, return_reques
     else:
         raise Exception("return_request_no is not assigned.")
     path = "/v3/marketing/busifavor/coupons/return"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_busifavor_coupon_deactivate(
+async def marketing_busifavor_coupon_deactivate(
     self, coupon_code, stock_id, deactivate_request_no, deactivate_reason=None
 ):
     """使券失效
@@ -1024,10 +1034,10 @@ def marketing_busifavor_coupon_deactivate(
     if deactivate_reason:
         params.update({"deactivate_reason": deactivate_reason})
     path = "/v3/marketing/busifavor/coupons/deactivate"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_busifavor_subsidy_pay(
+async def marketing_busifavor_subsidy_pay(
     self,
     stock_id,
     coupon_code,
@@ -1082,10 +1092,10 @@ def marketing_busifavor_subsidy_pay(
     else:
         raise Exception("out_subsidy_no is not assigned.")
     path = "/v3/marketing/busifavor/subsidy/pay-receipts"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def marketing_busifavor_subsidy_query(self, subsidy_receipt_id):
+async def marketing_busifavor_subsidy_query(self, subsidy_receipt_id):
     """查询营销补差付款单详情
     :param subsidy_receipt_id: 补差付款单号。示例值:'1120200119165100000000000001'
     """
@@ -1093,15 +1103,17 @@ def marketing_busifavor_subsidy_query(self, subsidy_receipt_id):
         path = "/v3/marketing/busifavor/subsidy/pay-receipts/%s" % subsidy_receipt_id
     else:
         raise Exception("subsidy_receipt_id is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def industry_coupon_token(self, open_id, coupon_list=[]):
+async def industry_coupon_token(self, open_id, coupon_list=None):
     """出行券切卡组件预下单
     https://pay.weixin.qq.com/wiki/doc/apiv3_partner/apis/chapter9_9_1.shtml
     :param open_id: 用户在商户AppID下的唯一标识，该用户为后续拉起切卡组件的用户。示例值：'obLatjrR8kUDlj4-nofQsPAJAAFI'
     :param coupon_list: 用户最近领取的出行券列表。示例值：[{"coupon_id": "11004999626", "stock_id": 16474341}]
     """
+    if coupon_list is None:
+        coupon_list = []
     params = {}
     if open_id:
         params.update({"open_id": open_id})
@@ -1112,10 +1124,10 @@ def industry_coupon_token(self, open_id, coupon_list=[]):
     else:
         raise Exception("coupon_list is not assigned.")
     path = "/v3/industry-coupon/tokens"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def bank_package_file(self, package_id, bank_type, filepath):
+async def bank_package_file(self, package_id, bank_type, filepath):
     """导入定向用户协议号
     https://pay.weixin.qq.com/wiki/doc/apiv3_partner/apis/chapter9_8_1.shtml
     :package_id: 号码包唯一标识符。可在微信支付商户平台创建号码包后获得。示例值：'8473295'
@@ -1141,6 +1153,6 @@ def bank_package_file(self, package_id, bank_type, filepath):
     )
     files = [("file", (filename, content, mimes[filetype]))]
     path = "/v3/marketing/bank/packages/%s/tasks" % package_id
-    return self._core.request(
+    return await self._core.request(
         path, method=RequestType.POST, data=params, sign_data=params.get("meta"), files=files
     )

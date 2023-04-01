@@ -3,7 +3,7 @@
 from .type import RequestType
 
 
-def parking_service_find(self, plate_number, plate_color, openid, sub_mchid=None):
+async def parking_service_find(self, plate_number, plate_color, openid, sub_mchid=None):
     """查询车牌服务开通信息
     :param plate_number: 车牌号，示例值:'粤B888888'
     :param plate_color: 车牌颜色，车牌颜色，枚举值:BLUE:蓝色，GREEN:绿色，YELLOW:黄色，BLACK:黑色，WHITE:白色，LIMEGREEN:黄绿色
@@ -28,10 +28,10 @@ def parking_service_find(self, plate_number, plate_color, openid, sub_mchid=None
             path = "%s&sub_mchid=%s" % (path, sub_mchid)
         else:
             raise Exception("sub_mchid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def parking_enter(
+async def parking_enter(
     self,
     out_parking_no,
     plate_number,
@@ -86,10 +86,10 @@ def parking_enter(
         else:
             raise Exception("sub_mchid is not assigned.")
     path = "/v3/vehicle/parking/parkings"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def parking_order(
+async def parking_order(
     self,
     description,
     out_trade_no,
@@ -211,10 +211,10 @@ def parking_order(
         else:
             raise Exception("sub_mchid is not assigned.")
     path = "/v3/vehicle/transactions/parking"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def parking_order_query(self, out_trade_no, sub_mchid=None):
+async def parking_order_query(self, out_trade_no, sub_mchid=None):
     """停车扣费订单查询
     :param out_trade_no: 商户订单号，商户系统内部订单号，只能是数字、大小写字母，且在同一个商户号下唯一，示例值:'20150806125346'
     :param sub_mchid: (服务商模式)子商户的商户号，由微信支付生成并下发。示例值:'1900000109'
@@ -228,4 +228,4 @@ def parking_order_query(self, out_trade_no, sub_mchid=None):
             path = "%s?sub_mchid=%s" % (path, sub_mchid)
         else:
             raise Exception("sub_mchid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)

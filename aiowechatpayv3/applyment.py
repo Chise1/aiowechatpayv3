@@ -3,7 +3,7 @@
 from .type import RequestType
 
 
-def applyment_submit(
+async def applyment_submit(
     self,
     business_code,
     contact_info,
@@ -127,10 +127,10 @@ def applyment_submit(
         params["bank_account_info"]["account_number"]
     )
     path = "/v3/applyment4sub/applyment/"
-    return self._core.request(path, method=RequestType.POST, data=params, cipher_data=True)
+    return await self._core.request(path, method=RequestType.POST, data=params, cipher_data=True)
 
 
-def applyment_query(self, business_code=None, applyment_id=None):
+async def applyment_query(self, business_code=None, applyment_id=None):
     """查询申请单状态
     :param business_code: 业务申请编号，示例值:'APPLYMENT_00000000001'
     :param applyment_id: 申请单号，示例值:2000001234567890
@@ -141,10 +141,10 @@ def applyment_query(self, business_code=None, applyment_id=None):
         path = "/v3/applyment4sub/applyment/applyment_id/%s" % applyment_id
     else:
         raise Exception("business_code or applyment_id is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def applyment_settlement_modify(
+async def applyment_settlement_modify(
     self,
     sub_mchid,
     account_type,
@@ -190,10 +190,12 @@ def applyment_settlement_modify(
         params.update({"bank_name": bank_name})
     if bank_branch_id:
         params.update({"bank_branch_id": bank_branch_id})
-    return self._core.request(path, method=RequestType.POST, data=params, cipher_data=cipher_data)
+    return await self._core.request(
+        path, method=RequestType.POST, data=params, cipher_data=cipher_data
+    )
 
 
-def applyment_settlement_query(self, sub_mchid):
+async def applyment_settlement_query(self, sub_mchid):
     """查询结算账户
     :param sub_mchid: 特约商户号，示例值:'1511101111'
     """
@@ -201,4 +203,4 @@ def applyment_settlement_query(self, sub_mchid):
         path = "/v3/apply4sub/sub_merchants/%s/settlement" % sub_mchid
     else:
         raise Exception("sub_mchid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)

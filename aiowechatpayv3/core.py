@@ -149,31 +149,23 @@ class Core:
             self._logger.debug("Request type: %s" % method.value)
             self._logger.debug("Request headers: %s" % headers)
             self._logger.debug("Request params: %s" % data)
+        client = httpx.AsyncClient(proxies=self._proxy)
         if method == RequestType.GET:
-            response = await httpx.get(
-                url=self._gate_way + path, headers=headers, proxies=self._proxy
-            )
+            response = await client.get(url=self._gate_way + path, headers=headers)
         elif method == RequestType.POST:
-            response = await httpx.post(
+            response = await client.post(
                 url=self._gate_way + path,
                 json=None if files else data,
                 data=data if files else None,
                 headers=headers,
                 files=files,
-                proxies=self._proxy,
             )
         elif method == RequestType.PATCH:
-            response = await httpx.patch(
-                url=self._gate_way + path, json=data, headers=headers, proxies=self._proxy
-            )
+            response = await client.patch(url=self._gate_way + path, json=data, headers=headers)
         elif method == RequestType.PUT:
-            response = await httpx.put(
-                url=self._gate_way + path, json=data, headers=headers, proxies=self._proxy
-            )
+            response = await client.put(url=self._gate_way + path, json=data, headers=headers)
         elif method == RequestType.DELETE:
-            response = await httpx.delete(
-                url=self._gate_way + path, headers=headers, proxies=self._proxy
-            )
+            response = await client.delete(url=self._gate_way + path, headers=headers)
         else:
             raise Exception("wechatpayv3 does no support this request type.")
         if self._logger:

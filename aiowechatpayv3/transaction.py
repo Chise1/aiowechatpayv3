@@ -119,7 +119,7 @@ async def pay(
     return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def close(self, out_trade_no, mchid=None, sub_mchid=None):
+async def close(self, out_trade_no, mchid=None, sub_mchid=None):
     """关闭订单
     :param out_trade_no: 商户订单号，示例值:'1217752501201407033233368018'
     :param mchid: 微信支付商户号，可不传，默认传入初始化的mchid。示例值:'987654321'
@@ -140,10 +140,10 @@ def close(self, out_trade_no, mchid=None, sub_mchid=None):
         else:
             raise Exception("out_trade_no is not assigned.")
         params = {"mchid": mchid or self._mchid}
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def query(self, transaction_id=None, out_trade_no=None, mchid=None, sub_mchid=None):
+async def query(self, transaction_id=None, out_trade_no=None, mchid=None, sub_mchid=None):
     """查询订单
     :param transaction_id: 微信支付订单号，示例值:1217752501201407033233368018
     :param out_trade_no: 商户订单号，示例值:1217752501201407033233368018
@@ -166,10 +166,10 @@ def query(self, transaction_id=None, out_trade_no=None, mchid=None, sub_mchid=No
         else:
             raise Exception("transaction_id out_trade_no is not assigned.")
         path = "%s?mchid=%s" % (path, mchid or self._mchid)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def refund(
+async def refund(
     self,
     out_refund_no,
     amount,
@@ -221,10 +221,10 @@ def refund(
         else:
             raise Exception("sub_mchid is not assigned.")
     path = "/v3/refund/domestic/refunds"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def query_refund(self, out_refund_no, sub_mchid=None):
+async def query_refund(self, out_refund_no, sub_mchid=None):
     """查询单笔退款
     :param out_refund_no: 商户退款单号，示例值:'1217752501201407033233368018'
     :param sub_mchid: (服务商模式)子商户的商户号，由微信支付生成并下发。示例值:'1900000109'
@@ -235,10 +235,10 @@ def query_refund(self, out_refund_no, sub_mchid=None):
             path = "%s?sub_mchid=%s" % (path, sub_mchid)
         else:
             raise Exception("sub_mchid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def trade_bill(self, bill_date, bill_type="ALL", tar_type="GZIP", sub_mchid=None):
+async def trade_bill(self, bill_date, bill_type="ALL", tar_type="GZIP", sub_mchid=None):
     """申请交易账单
     :param bill_date: 账单日期，示例值:'2019-06-11'
     :param bill_type: 账单类型, 默认值:'ALL'
@@ -252,10 +252,10 @@ def trade_bill(self, bill_date, bill_type="ALL", tar_type="GZIP", sub_mchid=None
     )
     if self._partner_mode and sub_mchid:
         path = "%s&sub_mchid=%s" % (path, sub_mchid)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def fundflow_bill(self, bill_date, account_type="BASIC", tar_type="GZIP"):
+async def fundflow_bill(self, bill_date, account_type="BASIC", tar_type="GZIP"):
     """申请资金账单
     :param bill_date: 账单日期，示例值:'2019-06-11'
     :param account_type: 资金账户类型, 默认值:'BASIC'，基本账户, 可选:'OPERATION'，运营账户；'FEES'，手续费账户
@@ -268,10 +268,10 @@ def fundflow_bill(self, bill_date, account_type="BASIC", tar_type="GZIP"):
         account_type,
         tar_type,
     )
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def submch_fundflow_bill(
+async def submch_fundflow_bill(
     self, sub_mchid, bill_date, account_type, algorithm="AEAD_AES_256_GCM", tar_type=None
 ):
     """申请单个子商户资金账单
@@ -300,18 +300,18 @@ def submch_fundflow_bill(
         raise Exception("algorithm is not assigned.")
     if tar_type:
         path += "&tar_type=%s" % tar_type
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def download_bill(self, url):
+async def download_bill(self, url):
     """下载账单
     :param url: 账单下载地址，示例值:'https://api.mch.weixin.qq.com/v3/billdownload/file?token=xxx'
     """
     path = url[len(self._core._gate_way) :] if url.startswith(self._core._gate_way) else url
-    return self._core.request(path, skip_verify=True)
+    return await self._core.request(path, skip_verify=True)
 
 
-def combine_pay(
+async def combine_pay(
     self,
     combine_out_trade_no,
     sub_orders,
@@ -373,10 +373,10 @@ def combine_pay(
         path = "/v3/combine-transactions/native"
     else:
         raise Exception("pay_type is not assigned.")
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def combine_query(self, combine_out_trade_no):
+async def combine_query(self, combine_out_trade_no):
     """合单查询订单
     :param combine_out_trade_no: 合单商户订单号，示例值:P20150806125346
     """
@@ -386,10 +386,10 @@ def combine_query(self, combine_out_trade_no):
     else:
         params.update({"combine_out_trade_no": combine_out_trade_no})
     path = "/v3/combine-transactions/out-trade-no/%s" % combine_out_trade_no
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def combine_close(self, combine_out_trade_no, sub_orders, combine_appid=None):
+async def combine_close(self, combine_out_trade_no, sub_orders, combine_appid=None):
     """合单关闭订单
     :param combine_out_trade_no: 合单商户订单号，示例值:'P20150806125346'
     :param sub_orders: 子单信息, 示例值:[{'mchid': '1900000109', 'out_trade_no': '20150806125346'}]
@@ -404,4 +404,4 @@ def combine_close(self, combine_out_trade_no, sub_orders, combine_appid=None):
     else:
         params.update({"sub_orders": sub_orders})
     path = "/v3/combine-transactions/out-trade-no/%s/close" % combine_out_trade_no
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)

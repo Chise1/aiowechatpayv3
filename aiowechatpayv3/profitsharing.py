@@ -3,7 +3,7 @@
 from .type import RequestType
 
 
-def profitsharing_order(
+async def profitsharing_order(
     self,
     transaction_id,
     out_order_no,
@@ -53,10 +53,12 @@ def profitsharing_order(
         else:
             raise Exception("sub_mchid is not assigned.")
     path = "/v3/profitsharing/orders"
-    return self._core.request(path, method=RequestType.POST, data=params, cipher_data=cipher_data)
+    return await self._core.request(
+        path, method=RequestType.POST, data=params, cipher_data=cipher_data
+    )
 
 
-def profitsharing_order_query(self, transaction_id, out_order_no, sub_mchid=None):
+async def profitsharing_order_query(self, transaction_id, out_order_no, sub_mchid=None):
     """查询分账结果
     :param transaction_id: 微信支付订单号，示例值:'4208450740201411110007820472'
     :param out_order_no: 商户分账单号，只能是数字、大小写字母_-|*@，示例值:'P20150806125346'
@@ -71,10 +73,10 @@ def profitsharing_order_query(self, transaction_id, out_order_no, sub_mchid=None
             path = "%s&sub_mchid=%s" % (path, sub_mchid)
         else:
             raise Exception("sub_mchid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def profitsharing_return(
+async def profitsharing_return(
     self,
     out_return_no,
     return_mchid,
@@ -122,10 +124,10 @@ def profitsharing_return(
         else:
             raise Exception("sub_mchid is not assigned.")
     path = "/v3/profitsharing/return-orders"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def profitsharing_return_query(self, out_order_no, out_return_no, sub_mchid=None):
+async def profitsharing_return_query(self, out_order_no, out_return_no, sub_mchid=None):
     """查询分账回退结果
     :param out_order_no: 商户分账单号，只能是数字、大小写字母_-|*@，示例值:'P20150806125346'
     :param out_return_no: 商户回退单号，商户在自己后台生成的一个新的回退单号，在商户后台唯一，示例值:'R20190516001'
@@ -140,10 +142,10 @@ def profitsharing_return_query(self, out_order_no, out_return_no, sub_mchid=None
             path = "%s&sub_mchid=%s" % (path, sub_mchid)
         else:
             raise Exception("sub_mchid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def profitsharing_unfreeze(self, transaction_id, out_order_no, description, sub_mchid=None):
+async def profitsharing_unfreeze(self, transaction_id, out_order_no, description, sub_mchid=None):
     """解冻剩余资金
     :param transaction_id: 微信支付订单号，示例值:'4208450740201411110007820472'
     :param out_order_no: 商户分账单号，只能是数字、大小写字母_-|*@，示例值:'P20150806125346'
@@ -169,10 +171,10 @@ def profitsharing_unfreeze(self, transaction_id, out_order_no, description, sub_
         else:
             raise Exception("sub_mchid is not assigned.")
     path = "/v3/profitsharing/orders/unfreeze"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def profitsharing_amount_query(self, transaction_id):
+async def profitsharing_amount_query(self, transaction_id):
     """查询剩余待分金额
     :param transaction_id: 微信支付订单号，示例值:'4208450740201411110007820472'
     """
@@ -180,10 +182,10 @@ def profitsharing_amount_query(self, transaction_id):
         path = "/v3/profitsharing/transactions/%s/amounts" % transaction_id
     else:
         raise Exception("transaction_id is not assigned")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def profitsharing_config_query(self, sub_mchid):
+async def profitsharing_config_query(self, sub_mchid):
     """查询最大分账比例
     :param sub_mchid: (服务商模式)子商户的商户号，由微信支付生成并下发。示例值:'1900000109'
     """
@@ -191,10 +193,10 @@ def profitsharing_config_query(self, sub_mchid):
         path = "/v3/profitsharing/merchant-configs/%s" % sub_mchid
     else:
         raise Exception("sub_mchid is not assigned")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def profitsharing_add_receiver(
+async def profitsharing_add_receiver(
     self,
     account_type,
     account,
@@ -250,10 +252,12 @@ def profitsharing_add_receiver(
         else:
             raise Exception("sub_mchid is not assigned.")
     path = "/v3/profitsharing/receivers/add"
-    return self._core.request(path, method=RequestType.POST, data=params, cipher_data=cipher_data)
+    return await self._core.request(
+        path, method=RequestType.POST, data=params, cipher_data=cipher_data
+    )
 
 
-def profitsharing_delete_receiver(
+async def profitsharing_delete_receiver(
     self, account_type, account, appid=None, sub_appid=None, sub_mchid=None
 ):
     """删除分账接收方
@@ -281,10 +285,10 @@ def profitsharing_delete_receiver(
         else:
             raise Exception("sub_mchid is not assigned.")
     path = "/v3/profitsharing/receivers/delete"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def profitsharing_bill(self, bill_date, tar_type="GZIP", sub_mchid=None):
+async def profitsharing_bill(self, bill_date, tar_type="GZIP", sub_mchid=None):
     """申请分账账单
     :param bill_date: 账单日期，格式'YYYY-MM-DD'，仅支持三个月内的账单下载申请。示例值:'2019-06-11'
     :param tar_type: 压缩类型，默认值:'GZIP'
@@ -293,10 +297,10 @@ def profitsharing_bill(self, bill_date, tar_type="GZIP", sub_mchid=None):
     path = "/v3/profitsharing/bills?bill_date=%s&tar_type=%s" % (bill_date, tar_type)
     if self._partner_mode and sub_mchid:
         path = "%s&sub_mchid=%s" % (path, sub_mchid)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def brand_profitsharing_order(
+async def brand_profitsharing_order(
     self,
     brand_mchid,
     sub_mchid,
@@ -346,10 +350,10 @@ def brand_profitsharing_order(
     if sub_appid:
         params.update({"sub_appid": sub_appid})
     path = "/v3/brand/profitsharing/orders"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def brand_profitsharing_order_query(self, transaction_id, out_order_no, sub_mchid):
+async def brand_profitsharing_order_query(self, transaction_id, out_order_no, sub_mchid):
     """查询连锁品牌分账结果
     :param transaction_id: 微信支付订单号，示例值:'4208450740201411110007820472'
     :param out_order_no: 商户分账单号，只能是数字、大小写字母_-|*@，示例值:'P20150806125346'
@@ -360,13 +364,13 @@ def brand_profitsharing_order_query(self, transaction_id, out_order_no, sub_mchi
     else:
         raise Exception("sub_mchid is not assigned.")
     if transaction_id and out_order_no:
-        path = "%s&transaction_id=%s&out_order_no=%s" % (transaction_id, out_order_no)
+        path = "%s&transaction_id=%s&out_order_no=%s" % (path, transaction_id, out_order_no)
     else:
         raise Exception("transaction_id or out_order_no is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def brand_profitsharing_return(
+async def brand_profitsharing_return(
     self,
     sub_mchid,
     out_return_no,
@@ -415,10 +419,10 @@ def brand_profitsharing_return(
     else:
         raise Exception("sub_mchid is not assigned.")
     path = "/v3/brand/profitsharing/returnorders"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def brand_profitsharing_return_query(
+async def brand_profitsharing_return_query(
     self, sub_mchid, out_return_no, order_id=None, out_order_no=None
 ):
     """查询连锁品牌分账回退结果
@@ -441,10 +445,10 @@ def brand_profitsharing_return_query(
         path = "%s&out_order_no=%s" % (path, out_order_no)
     else:
         raise Exception("order_id or out_order_no is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def brand_profitsharing_unfreeze(self, sub_mchid, transaction_id, out_order_no, description):
+async def brand_profitsharing_unfreeze(self, sub_mchid, transaction_id, out_order_no, description):
     """完结连锁品牌分账
     :param sub_mchid: 子商户的商户号，由微信支付生成并下发。示例值:'1900000109'
     :param transaction_id: 微信支付订单号，示例值:'4208450740201411110007820472'
@@ -469,10 +473,10 @@ def brand_profitsharing_unfreeze(self, sub_mchid, transaction_id, out_order_no, 
     else:
         raise Exception("description is not assigned")
     path = "/v3/brand/profitsharing/finish-order"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def brand_profitsharing_amount_query(self, transaction_id):
+async def brand_profitsharing_amount_query(self, transaction_id):
     """查询连锁品牌分账剩余待分金额
     :param transaction_id: 微信支付订单号，示例值:'4208450740201411110007820472'
     """
@@ -480,10 +484,10 @@ def brand_profitsharing_amount_query(self, transaction_id):
         path = "/v3/brand/profitsharing/orders/%s/amounts" % transaction_id
     else:
         raise Exception("transaction_id is not assigned")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def brand_profitsharing_config_query(self, brand_mchid):
+async def brand_profitsharing_config_query(self, brand_mchid):
     """查询连锁品牌分账最大分账比例
     :param brand_mchid: 品牌商户号，示例值:'1900000108'
     """
@@ -491,10 +495,10 @@ def brand_profitsharing_config_query(self, brand_mchid):
         path = "/v3/brand/profitsharing/brand-configs/%s" % brand_mchid
     else:
         raise Exception("brand_mchid is not assigned")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def brand_profitsharing_add_receiver(
+async def brand_profitsharing_add_receiver(
     self, brand_mchid, account_type, account, relation_type, name=None, appid=None, sub_appid=None
 ):
     """添加分账接收方
@@ -534,10 +538,12 @@ def brand_profitsharing_add_receiver(
     if sub_appid:
         params.update({"sub_appid": sub_appid})
     path = "/v3/brand/profitsharing/receivers/add"
-    return self._core.request(path, method=RequestType.POST, data=params, cipher_data=cipher_data)
+    return await self._core.request(
+        path, method=RequestType.POST, data=params, cipher_data=cipher_data
+    )
 
 
-def brand_profitsharing_delete_receiver(
+async def brand_profitsharing_delete_receiver(
     self, brand_mchid, account_type, account, appid=None, sub_appid=None
 ):
     """删除连锁品牌分账接收方
@@ -564,4 +570,4 @@ def brand_profitsharing_delete_receiver(
     if sub_appid:
         params.update({"sub_appid": sub_appid})
     path = "/v3/profitsharing/receivers/delete"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)

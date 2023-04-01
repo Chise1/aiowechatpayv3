@@ -6,7 +6,7 @@ from .media import _media_upload
 from .type import RequestType
 
 
-def complaint_list_query(
+async def complaint_list_query(
     self, begin_date=None, end_date=None, limit=10, offset=0, complainted_mchid=None
 ):
     """查询投诉单列表
@@ -24,20 +24,20 @@ def complaint_list_query(
         complainted_mchid = self._mchid
     path = "/v3/merchant-service/complaints-v2?limit=%s&offset=%s&begin_date=%s&end_date=%s&complainted_mchid=%s"
     path = path % (limit, offset, begin_date, end_date, complainted_mchid)
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def complaint_detail_query(self, complaint_id):
+async def complaint_detail_query(self, complaint_id):
     """查询投诉单详情
     :param complaint_id: 投诉单对应的投诉单号。示例值:'200201820200101080076610000'
     """
     if not complaint_id:
         raise Exception("complaint_id is not assigned.")
     path = "/v3/merchant-service/complaints-v2/%s" % complaint_id
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def complaint_history_query(self, complaint_id, limit=100, offset=0):
+async def complaint_history_query(self, complaint_id, limit=100, offset=0):
     """查询投诉协商历史
     :param complaint_id: 投诉单对应的投诉单号。示例值:'200201820200101080076610000'
     :param limit: 分页大小，设置该次请求返回的最大协商历史条数，范围[1,300]，不传默认为100。。示例值:5
@@ -52,10 +52,10 @@ def complaint_history_query(self, complaint_id, limit=100, offset=0):
         limit,
         offset,
     )
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def complaint_notification_create(self, url):
+async def complaint_notification_create(self, url):
     """创建投诉通知回调地址
     :param: url: 通知地址，仅支持https。示例值:'https://www.xxx.com/notify'
     """
@@ -65,18 +65,18 @@ def complaint_notification_create(self, url):
     else:
         raise Exception("url is not assigned.")
     path = "/v3/merchant-service/complaint-notifications"
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def complaint_notification_query(self):
+async def complaint_notification_query(self):
     """查询投诉通知回调地址
     :param: url: 通知地址，仅支持https。示例值:'https://www.xxx.com/notify'
     """
     path = "/v3/merchant-service/complaint-notifications"
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def complaint_notification_update(self, url):
+async def complaint_notification_update(self, url):
     """更新投诉通知回调地址
     :param: url: 通知地址，仅支持https。示例值:'https://www.xxx.com/notify'
     """
@@ -86,18 +86,18 @@ def complaint_notification_update(self, url):
     else:
         raise Exception("url is not assigned.")
     path = "/v3/merchant-service/complaint-notifications"
-    return self._core.request(path, method=RequestType.PUT, data=params)
+    return await self._core.request(path, method=RequestType.PUT, data=params)
 
 
-def complaint_notification_delete(self):
+async def complaint_notification_delete(self):
     """删除投诉通知回调地址
     :param: url: 通知地址，仅支持https。示例值:'https://www.xxx.com/notify'
     """
     path = "/v3/merchant-service/complaint-notifications"
-    return self._core.request(path, method=RequestType.DELETE)
+    return await self._core.request(path, method=RequestType.DELETE)
 
 
-def complaint_response(
+async def complaint_response(
     self, complaint_id, response_content, response_images=None, jump_url=None, jump_url_text=None
 ):
     """提交投诉回复
@@ -122,10 +122,10 @@ def complaint_response(
     if jump_url_text:
         params.update({"jump_url_text": jump_url_text})
     path = "/v3/merchant-service/complaints-v2/%s/response" % complaint_id
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def complaint_complete(self, complaint_id):
+async def complaint_complete(self, complaint_id):
     """反馈投诉处理完成
     :param complaint_id: 投诉单对应的投诉单号。示例值:'200201820200101080076610000'
     """
@@ -134,10 +134,10 @@ def complaint_complete(self, complaint_id):
         raise Exception("complaint_id is not assigned")
     params.update({"complainted_mchid": self._core._mchid})
     path = "/v3/merchant-service/complaints-v2/%s/complete" % complaint_id
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
-def complaint_image_upload(self, filepath, filename=None):
+async def complaint_image_upload(self, filepath, filename=None):
     """商户上传投诉反馈图片
     :param filepath: 图片文件路径
     :param filename: 文件名称，未指定则从filepath参数中截取
@@ -145,7 +145,7 @@ def complaint_image_upload(self, filepath, filename=None):
     return _media_upload(self, filepath, filename, "/v3/merchant-service/images/upload")
 
 
-def complaint_image_download(self, media_url):
+async def complaint_image_download(self, media_url):
     """下载客户投诉图片
     :param media_url: 图片下载地址，示例值:'https://api.mch.weixin.qq.com/v3/merchant-service/images/xxxxx'
     """
@@ -154,10 +154,10 @@ def complaint_image_download(self, media_url):
         if media_url.startswith(self._core._gate_way)
         else media_url
     )
-    return self._core.request(path, skip_verify=True)
+    return await self._core.request(path, skip_verify=True)
 
 
-def complaint_update_refund(
+async def complaint_update_refund(
     self,
     complaint_id,
     action,
@@ -193,4 +193,4 @@ def complaint_update_refund(
         params.update({"reject_media_list": reject_media_list})
     if remark:
         params.update({"remark": remark})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)

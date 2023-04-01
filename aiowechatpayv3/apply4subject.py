@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-
 from .type import RequestType
 
 
-def apply4subject_submit(
+async def apply4subject_submit(
     self,
     business_code,
     contact_info,
@@ -11,7 +10,7 @@ def apply4subject_submit(
     identification_info,
     channel_id=None,
     addition_info=None,
-    ubo_info_list=[],
+    ubo_info_list=None,
 ):
     """（商户开户意愿）提交申请单
     :param business_code: 业务申请编号，示例值:'APPLYMENT_00000000001'
@@ -23,6 +22,8 @@ def apply4subject_submit(
     :param addition_info: 补充材料，示例值:{'confirm_mchid_list':['20001113']}
     :param ubo_info_list: 最终受益人信息列表，示例值:[{'ubo_id_doc_type':'IDENTIFICATION_TYPE_IDCARD','ubo_id_doc_name':'张三','ubo_id_doc_number':'110220330044005500'}]
     """
+    if ubo_info_list is None:
+        ubo_info_list = []
     params = {}
     if business_code:
         params.update({"business_code": business_code})
@@ -76,10 +77,10 @@ def apply4subject_submit(
             ubo_info["ubo_id_doc_number"] = self._core.encrypt(ubo_info["ubo_id_doc_number"])
             ubo_info["ubo_id_doc_address"] = self._core.encrypt(ubo_info["ubo_id_doc_address"])
     path = "/v3/apply4subject/applyment"
-    return self._core.request(path, method=RequestType.POST, data=params, cipher_data=True)
+    return await self._core.request(path, method=RequestType.POST, data=params, cipher_data=True)
 
 
-def apply4subject_cancel(self, business_code=None, applyment_id=None):
+async def apply4subject_cancel(self, business_code=None, applyment_id=None):
     """（商户开户意愿）撤销申请单
     :param business_code: 业务申请编号，示例值:'2000001234567890'
     :param applyment_id: 申请单编号，示例值:2000001234567890
@@ -90,10 +91,10 @@ def apply4subject_cancel(self, business_code=None, applyment_id=None):
         path = "/v3/apply4subject/applyment/%s/cancel" % applyment_id
     else:
         raise Exception("business_code or applyment_id is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def apply4subject_query(self, business_code=None, applyment_id=None):
+async def apply4subject_query(self, business_code=None, applyment_id=None):
     """（商户开户意愿）查询申请单审核结果
     :param business_code: 业务申请编号，示例值:'2000001234567890'
     :param applyment_id: 申请单编号，示例值:2000001234567890
@@ -104,10 +105,10 @@ def apply4subject_query(self, business_code=None, applyment_id=None):
         path = "/v3/apply4subject/applyment?applyment_id=%s" % applyment_id
     else:
         raise Exception("business_code or applyment_id is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
 
 
-def apply4subject_state(self, sub_mchid):
+async def apply4subject_state(self, sub_mchid):
     """（商户开户意愿）获取商户开户意愿确认状态
     :param sub_mchid: 特约商户号，示例值:'1511101111'
     """
@@ -115,4 +116,4 @@ def apply4subject_state(self, sub_mchid):
         path = "/v3/apply4subject/applyment/merchants/%s/state" % sub_mchid
     else:
         raise Exception("sub_mchid is not assigned.")
-    return self._core.request(path)
+    return await self._core.request(path)
