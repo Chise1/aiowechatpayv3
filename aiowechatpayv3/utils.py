@@ -7,7 +7,8 @@ from base64 import b64decode, b64encode
 
 from cryptography.exceptions import InvalidSignature, InvalidTag
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP, PKCS1v15
+from cryptography.hazmat.primitives.asymmetric.padding import (MGF1, OAEP,
+                                                               PKCS1v15)
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.hashes import SHA1, SHA256, SM3, Hash
 from cryptography.hazmat.primitives.hmac import HMAC

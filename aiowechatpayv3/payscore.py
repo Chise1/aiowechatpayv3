@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .type import RequestType
 from .transaction import query_refund, refund
+from .type import RequestType
 
 
 def payscore_direct_complete(self, out_order_no, openid, service_id, service_introduction, post_payments,

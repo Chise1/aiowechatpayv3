@@ -4,10 +4,9 @@ import logging
 import os
 from random import sample
 from string import ascii_letters, digits
+from fastapi import FastAPI, Request, Response, status
 
-from flask import Flask, jsonify, request
-
-from wechatpayv3 import SignType, WeChatPay, WeChatPayType
+from aiowechatpayv3 import SignType, WeChatPay, WeChatPayType
 
 # 微信支付商户号（直连模式）或服务商商户号（服务商模式，即sp_mchid)
 MCHID = '1234567890'
@@ -33,7 +32,8 @@ NOTIFY_URL = 'https://www.xxxx.com/notify'
 CERT_DIR = None
 
 # 日志记录器，记录web请求和回调细节
-logging.basicConfig(filename=os.path.join(os.getcwd(), 'demo.log'), level=logging.DEBUG, filemode='a', format='%(asctime)s - %(process)s - %(levelname)s: %(message)s')
+logging.basicConfig(filename=os.path.join(os.getcwd(), 'demo.log'), level=logging.DEBUG, filemode='a',
+                    format='%(asctime)s - %(process)s - %(levelname)s: %(message)s')
 LOGGER = logging.getLogger("demo")
 
 # 接入模式:False=直连商户模式，True=服务商模式
@@ -56,32 +56,32 @@ wxpay = WeChatPay(
     partner_mode=PARTNER_MODE,
     proxy=PROXY)
 
-app = Flask(__name__)
+app = FastAPI(title="wechatpayv3 demo")
 
 
-@app.route('/pay')
-def pay():
+@app.get('/pay')
+async def pay():
     # 以native下单为例，下单成功后即可获取到'code_url'，将'code_url'转换为二维码，并用微信扫码即可进行支付测试。
     out_trade_no = ''.join(sample(ascii_letters + digits, 8))
     description = 'demo-description'
     amount = 1
-    code, message = wxpay.pay(
+    code, message = await wxpay.pay(
         description=description,
         out_trade_no=out_trade_no,
         amount={'total': amount},
         pay_type=WeChatPayType.NATIVE
     )
-    return jsonify({'code': code, 'message': message})
+    return {'code': code, 'message': message}
 
 
-@app.route('/pay_jsapi')
+@app.get('/pay_jsapi')
 def pay_jsapi():
     # 以jsapi下单为例，下单成功后，将prepay_id和其他必须的参数组合传递给JSSDK的wx.chooseWXPay接口唤起支付
     out_trade_no = ''.join(sample(ascii_letters + digits, 8))
     description = 'demo-description'
     amount = 1
     payer = {'openid': 'demo-openid'}
-    code, message = wxpay.pay(
+    code, message = await wxpay.pay(
         description=description,
         out_trade_no=out_trade_no,
         amount={'total': amount},
@@ -96,43 +96,43 @@ def pay_jsapi():
         package = 'prepay_id=' + prepay_id
         paysign = wxpay.sign([APPID, timestamp, noncestr, package])
         signtype = 'RSA'
-        return jsonify({'code': 0, 'result': {
+        return {'code': 0, 'result': {
             'appId': APPID,
             'timeStamp': timestamp,
             'nonceStr': noncestr,
             'package': 'prepay_id=%s' % prepay_id,
             'signType': signtype,
             'paySign': paysign
-        }})
+        }}
     else:
-        return jsonify({'code': -1, 'result': {'reason': result.get('code')}})
+        return {'code': -1, 'result': {'reason': result.get('code')}}
 
 
-@app.route('/pay_h5')
+@app.get('/pay_h5')
 def pay_h5():
     # 以h5下单为例，下单成功后，将获取的的h5_url传递给前端跳转唤起支付。
     out_trade_no = ''.join(sample(ascii_letters + digits, 8))
     description = 'demo-description'
     amount = 1
     scene_info = {'payer_client_ip': '1.2.3.4', 'h5_info': {'type': 'Wap'}}
-    code, message = wxpay.pay(
+    code, message = await wxpay.pay(
         description=description,
         out_trade_no=out_trade_no,
         amount={'total': amount},
         pay_type=WeChatPayType.H5,
         scene_info=scene_info
     )
-    return jsonify({'code': code, 'message': message})
+    return {'code': code, 'message': message}
 
 
-@app.route('/pay_miniprog')
+@app.get('/pay_miniprog')
 def pay_miniprog():
     # 以小程序下单为例，下单成功后，将prepay_id和其他必须的参数组合传递给小程序的wx.requestPayment接口唤起支付
     out_trade_no = ''.join(sample(ascii_letters + digits, 8))
     description = 'demo-description'
     amount = 1
     payer = {'openid': 'demo-openid'}
-    code, message = wxpay.pay(
+    code, message = await wxpay.pay(
         description=description,
         out_trade_no=out_trade_no,
         amount={'total': amount},
@@ -147,25 +147,25 @@ def pay_miniprog():
         package = 'prepay_id=' + prepay_id
         paysign = wxpay.sign(data=[APPID, timestamp, noncestr, package], sign_type=SignType.RSA_SHA256)
         signtype = 'RSA'
-        return jsonify({'code': 0, 'result': {
+        return {'code': 0, 'result': {
             'appId': APPID,
             'timeStamp': timestamp,
             'nonceStr': noncestr,
             'package': 'prepay_id=%s' % prepay_id,
             'signType': signtype,
             'paySign': paysign
-        }})
+        }}
     else:
-        return jsonify({'code': -1, 'result': {'reason': result.get('code')}})
+        return {'code': -1, 'result': {'reason': result.get('code')}}
 
 
-@app.route('/pay_app')
+@app.get('/pay_app')
 def pay_app():
     # 以app下单为例，下单成功后，将prepay_id和其他必须的参数组合传递给IOS或ANDROID SDK接口唤起支付
     out_trade_no = ''.join(sample(ascii_letters + digits, 8))
     description = 'demo-description'
     amount = 1
-    code, message = wxpay.pay(
+    code, message = await wxpay.pay(
         description=description,
         out_trade_no=out_trade_no,
         amount={'total': amount},
@@ -178,7 +178,7 @@ def pay_app():
         noncestr = 'demo-nocestr'
         package = 'Sign=WXPay'
         paysign = 'demo-sign'
-        return jsonify({'code': 0, 'result': {
+        return {'code': 0, 'result': {
             'appid': APPID,
             'partnerid': MCHID,
             'prepayid': prepay_id,
@@ -186,14 +186,15 @@ def pay_app():
             'nonceStr': noncestr,
             'timestamp': timestamp,
             'sign': paysign
-        }})
+        }}
     else:
-        return jsonify({'code': -1, 'result': {'reason': result.get('code')}})
+        return {'code': -1, 'result': {'reason': result.get('code')}}
 
 
-@app.route('/notify', methods=['POST'])
-def notify():
-    result = wxpay.callback(request.headers, request.data)
+@app.post('/notify')
+def notify(request: Request):
+    body = await request.body()
+    result = wxpay.callback(request.headers, body)
     if result and result.get('event_type') == 'TRANSACTION.SUCCESS':
         resp = result.get('resource')
         appid = resp.get('appid')
@@ -209,10 +210,12 @@ def notify():
         payer = resp.get('payer')
         amount = resp.get('amount').get('total')
         # TODO: 根据返回参数进行必要的业务处理，处理完后返回200或204
-        return jsonify({'code': 'SUCCESS', 'message': '成功'})
+        return {'code': 'SUCCESS', 'message': '成功'}
     else:
-        return jsonify({'code': 'FAILED', 'message': '失败'}), 500
+        return Response({'code': 'FAILED', 'message': '失败'}, 500)
 
 
 if __name__ == '__main__':
-    app.run()
+    import uvicorn
+
+    uvicorn.run(app)

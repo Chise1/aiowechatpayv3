@@ -3,7 +3,7 @@
 from .type import RequestType, WeChatPayType
 
 
-def pay(self,
+async def pay(self,
         description,
         out_trade_no,
         amount,
@@ -114,7 +114,7 @@ def pay(self,
             raise Exception('pay_type is not assigned.')
     if support_fapiao:
         params.update({'support_fapiao': support_fapiao})
-    return self._core.request(path, method=RequestType.POST, data=params)
+    return await self._core.request(path, method=RequestType.POST, data=params)
 
 
 def close(self, out_trade_no, mchid=None, sub_mchid=None):

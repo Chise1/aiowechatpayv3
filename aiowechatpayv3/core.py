@@ -4,7 +4,7 @@ import json
 import os
 from datetime import datetime
 
-import requests
+import httpx
 
 from .type import RequestType, SignType
 from .utils import (aes_decrypt, build_authorization, hmac_sign,
@@ -89,7 +89,9 @@ class Core():
             return False
         return True
 
-    def request(self, path, method=RequestType.GET, data=None, skip_verify=False, sign_data=None, files=None, cipher_data=False, headers={}):
+    async def request(self, path, method=RequestType.GET, data=None, skip_verify=False, sign_data=None, files=None, cipher_data=False, headers=None):
+        if not headers:
+            headers = {}
         if files:
             headers.update({'Content-Type': 'multipart/form-data'})
         else:
@@ -112,15 +114,15 @@ class Core():
             self._logger.debug('Request headers: %s' % headers)
             self._logger.debug('Request params: %s' % data)
         if method == RequestType.GET:
-            response = requests.get(url=self._gate_way + path, headers=headers, proxies=self._proxy)
+            response = await httpx.get(url=self._gate_way + path, headers=headers, proxies=self._proxy)
         elif method == RequestType.POST:
-            response = requests.post(url=self._gate_way + path, json=None if files else data, data=data if files else None, headers=headers, files=files, proxies=self._proxy)
+            response = await httpx.post(url=self._gate_way + path, json=None if files else data, data=data if files else None, headers=headers, files=files, proxies=self._proxy)
         elif method == RequestType.PATCH:
-            response = requests.patch(url=self._gate_way + path, json=data, headers=headers, proxies=self._proxy)
+            response = await httpx.patch(url=self._gate_way + path, json=data, headers=headers, proxies=self._proxy)
         elif method == RequestType.PUT:
-            response = requests.put(url=self._gate_way + path, json=data, headers=headers, proxies=self._proxy)
+            response = await httpx.put(url=self._gate_way + path, json=data, headers=headers, proxies=self._proxy)
         elif method == RequestType.DELETE:
-            response = requests.delete(url=self._gate_way + path, headers=headers, proxies=self._proxy)
+            response = await httpx.delete(url=self._gate_way + path, headers=headers, proxies=self._proxy)
         else:
             raise Exception('wechatpayv3 does no support this request type.')
         if self._logger:
