@@ -4,6 +4,7 @@ import json
 import time
 import uuid
 from base64 import b64decode, b64encode
+from logging import getLogger
 
 from cryptography.exceptions import InvalidSignature, InvalidTag
 from cryptography.hazmat.backends import default_backend
@@ -13,6 +14,8 @@ from cryptography.hazmat.primitives.hashes import SHA1, SHA256, SM3, Hash
 from cryptography.hazmat.primitives.hmac import HMAC
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from cryptography.x509 import load_pem_x509_certificate
+
+logger = getLogger(__name__)
 
 
 def build_authorization(path, method, mchid, serial_no, private_key, data=None, nonce_str=None):
@@ -65,7 +68,8 @@ def load_certificate(certificate_str):
         return load_pem_x509_certificate(
             data=certificate_str.encode("UTF-8"), backend=default_backend()
         )
-    except:
+    except Exception as e:
+        logger.warning(e)
         return None
 
 
